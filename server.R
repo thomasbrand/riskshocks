@@ -3,24 +3,40 @@ library(rCharts)
 
 shinyServer(function(input, output) {
   
-  dataDecompo <- reactive({subset(dataD,variable == input$Obsvar2 & country == input$Country)})
-  dataRaw <- reactive({subset(rawdatawitherror, variable == input$Obsvar2 & country == input$Country)})
-  dataDecompoRaw <- reactive({rbind(dataDecompo(),dataRaw())})
-
-  output$simpleLine <- renderChart({
-    if (input$withoutmean) {
-      dataObserv <- reactive({subset(rawdata4,variable == input$Obsvar1 & shock == 'rawdata4withoutmean')})
-    } else {
-      dataObserv <- reactive({subset(rawdata4,variable == input$Obsvar1 & shock == 'rawdata4withmean')})
+  dataR <- reactive({
+    if (input$withoutmean){
+      if (input$rawdataCMR){
+        data <- rbind(subset(dataRaw,variable == input$Obsvar1 & shock %in% c('rawdata4withoutmean','rawdataCMR')))
+      } else{
+        data <- rbind(subset(dataRaw,variable == input$Obsvar1 & shock == 'rawdata4withoutmean'))
+      }
+    } else{
+      data <- subset(dataRaw,variable == input$Obsvar1 & shock == 'rawdata4withmean')
     }
-    n <- nPlot(value ~ time, data=dataObserv(),type = "lineChart",group="country")
+  })
+  
+  dataD <- reactive({subset(dataDecompo,variable == input$Obsvar2 & country == input$Country)})
+  dataS <- reactive({subset(dataSum, variable == input$Obsvar2 & country == input$Country)})
+  dataDS <- reactive({rbind(dataD(),
+                            dataS(),
+                            subset(dataRaw,variable == input$Obsvar2 & country == input$Country & shock == 'rawdata4withoutmean'))})
+  
+  output$simpleLine <- renderChart({
+    n <- nPlot(value ~ time, data=dataR(),type = "lineChart",group="country")
     n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
     n$yAxis(tickFormat ="#!function (d) {return d3.format(',.1%')(d);}!#",showMaxMin = TRUE)
     n$set(dom = 'simpleLine', width = 700,height=400)
     n
   })
   
-  #if
+  output$simpleLine2 <- renderChart({
+    n <- nPlot(value ~ time, data=dataDefSim,type = "lineChart",group="variable")
+    n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
+    n$yAxis(tickFormat ="#!function (d) {return d3.format(',.1%')(d);}!#",showMaxMin = TRUE)
+    n$set(dom = 'simpleLine2', width = 700,height=400)
+    n
+  })
+  
 #   output$cumuLine <- renderChart({
 #     n <- nPlot(value ~ time, data=dataObserv(), type = "cumulativeLineChart",group="country")
 #     n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
@@ -31,7 +47,7 @@ shinyServer(function(input, output) {
 #   })
   
   output$multiBar <- renderChart({
-    n <- nPlot(value ~ time, data = dataDecompo(), type = "multiBarChart",group="shock")
+    n <- nPlot(value ~ time, data = dataD(), type = "multiBarChart",group="shock")
     n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
     n$yAxis(tickFormat ="#!function (d) {return d3.format(',.1%')(d);}!#",showMaxMin = TRUE)
     n$chart(showControls=FALSE,stacked=TRUE)
@@ -40,7 +56,7 @@ shinyServer(function(input, output) {
   })
   
   output$focusLine <- renderChart({
-    n <- nPlot(value ~ time, data = dataDecompoRaw(), type = "lineWithFocusChart",group="shock")
+    n <- nPlot(value ~ time, data = dataDS(), type = "lineWithFocusChart",group="shock")
     n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
     n$yAxis(tickFormat ="#!function (d) {return d3.format(',.1%')(d);}!#",showMaxMin = FALSE)
     #n$y2Axis(tickFormat ="#!function (d) {return d3.format(',.1%')(d);}!#",showMaxMin = FALSE)
@@ -49,12 +65,24 @@ shinyServer(function(input, output) {
     n
   })
   
-  output$table <- renderTable({
+  output$table <- renderDataTable({
     dataTable
   })
   
-  output$downloadRawdata <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rawdata4, file)})
-  output$downloadDataD <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(dataD, file)})
+  output$downloadDataRaw <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(dataRaw, file)})
+  output$downloadDataDecompo <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(dataDecompo,dataSum), file)})
   output$downloadDataTable <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(dataTable, file)})
   
+  output$pageviews <-  renderText({
+    if (!file.exists("pageviews.Rdata")) pageviews <- 0 else load(file="pageviews.Rdata")
+    pageviews <- pageviews + 1
+    save(pageviews,file="pageviews.Rdata")
+    paste("Visits:",pageviews)
+  })
+
 })
+
+
+
+
+

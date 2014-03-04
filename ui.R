@@ -7,34 +7,40 @@ shinyUI(pageWithSidebar(
   
   sidebarPanel(
     
-    h3("An Analysis of Exit Strategies in EA and the US"),
+    h3("An Analysis of Exit Strategies in Euro Area and the United States"),
     
     p("by",a("Thomas Brand",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Thomas%20Brand"),
       "and",a("Fabien Tripier",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Fabien%20Tripier")),
-    p("CMR (2014) show that risk shocks are essential to explain fluctuations of GDP in the US, especially during the Great Recession. Based on their model, we adress 2 more questions : "),
-    p("* Is the decline of risk shocks essential to explain recovery ?"),
-    p("* Is it the same phenomenon in Euro Area ?"),
-    p("We update the CMR database, compile EA database, add one observed variable (government deficit) and re-estimate the model for both countries."),
     
     tags$hr(),
     conditionalPanel(
       condition="input.tsp=='motiv'",
+      p("CMR (2014) show that risk shocks are essential to explain fluctuations of GDP in the US, especially during the Great Recession. Based on their model, we address 3 more questions : "),
+      p("* Is the decline of risk shocks essential to explain recovery ?"),
+      p("* Is it the same phenomenon in EA ?"),
+      p("* What would US policies have produced in EA ?"),
+      p("We update the CMR database, compile EA database, add one observed variable (government deficit) and estimate the model for both countries."),
+      tags$hr(),
       selectInput('Obsvar1',
-                  'Plot one of the variables used in estimation : ',
+                  'Plot one of the variables used in estimation (annualized here) : ',
                   obsnames),
       checkboxInput('withoutmean','Demeaned variable (actually used in estimation)',FALSE),
       conditionalPanel(
         condition="input.withoutmean==true",
-        checkboxGroupInput("compareRawdata",
-                     "Maybe you want to compare to :",
-                     c("cmr_rawdata","explained_rawdata"))
-        ),
+        p("Maybe you want to compare to CMR rawdata (also annualized) ?"),
+        checkboxInput("rawdataCMR","Yes, it would be wonderful !",FALSE)
+      ),
       tags$hr(),
-      downloadButton('downloadRawdata', 'Download as csv')      
+      downloadButton('downloadDataRaw', 'Download as csv')      
     ),
     
     conditionalPanel(
-      condition="input.tsp=='plot'",
+      condition="input.tsp=='cmr'",
+      p("Fiscal policy plays potentially a big role in explaining exit strategies. How original CMR's model take it into account ? Not so good if we look at the public deficit implied by the model.")
+    ),
+    
+    conditionalPanel(
+      condition="input.tsp=='decompo'",
       selectInput('Country',
                   'Country : ',
                   c('EA','US')),
@@ -42,7 +48,7 @@ shinyUI(pageWithSidebar(
                   'Observed Variable : ',
                   obsnames),
       tags$hr(),
-      downloadButton('downloadDataD', 'Download as csv')
+      downloadButton('downloadDataDecompo', 'Download as csv')
     ),
     
     conditionalPanel(
@@ -50,10 +56,16 @@ shinyUI(pageWithSidebar(
       tags$hr(),
       downloadButton('downloadDataTable', 'Download as csv')
     ),
+
+    conditionalPanel(
+      condition="input.tsp=='counterfact'",
+      p("Assessing the role of shocks, policies and structures"),
+      p("(what would have happened if US fiscal and monetary policies were implemented in EA ?)")
+    ),
     
     tags$hr(),
-    p("Source code is available",a("here",href="https://github.com/thomasbrand/riskshocks")),
-    a(img(src="http://www.cepii.fr/CEPII/medias/mailing/logo_cepii.jpg", width="180", height="64"),href="http://www.cepii.fr")
+    p("Source code available at",a("GitHub",href="https://github.com/thomasbrand/riskshocks"),textOutput("pageviews")),
+    a(img(src="http://www.cepii.fr/CEPII/css/img/header/logo_header_fr.png", width="180", height="64"),href="http://www.cepii.fr")
   ),
   
   
@@ -65,7 +77,10 @@ shinyUI(pageWithSidebar(
                #h4("Cumulative Growth of Selected Observed Variable"),
                #showOutput("cumuLine","nvd3"),
                value="motiv"),
-      tabPanel("Plots",
+      tabPanel("CMR Results",
+               showOutput("simpleLine2","nvd3"),
+               value="cmr"),
+      tabPanel("Our Shock Decomposition",
                h4("The Decomposition of Shocks in Selected Variable"),
                showOutput("multiBar","nvd3"),
                tags$hr(),
@@ -74,10 +89,18 @@ shinyUI(pageWithSidebar(
                #tags$hr(),
                #h4("Cumulative Growth of Selected Observed Variable"),
                #showOutput("cumuLine2","nvd3"),
-               value="plot"),
+               value="decompo"),
       tabPanel("Priors & Posteriors",
-               tableOutput("table"),
+               dataTableOutput("table"),
                value="table"),
+      tabPanel("Counterfactual",
+               value="counterfact"),
+      tabPanel("About",
+               h4("References"),
+               p("Published version of Christiano, Motto and Rostagno (2014) is available in",a("AER website",href="https://www.aeaweb.org/articles.php?doi=10.1257/aer.104.1.27"),"with technical appendix and Dynare code."),
+               h4("Thanks"),
+               p("rCharts"),
+               value="about"),
       id="tsp"
     )
   )
