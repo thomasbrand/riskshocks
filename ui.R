@@ -21,8 +21,9 @@ shinyUI(pageWithSidebar(
       p("* What would US policies have produced in EA ?"),
       p("We update the CMR database, compile EA database, add one observed variable (government deficit) and estimate the model for both countries."),
       tags$hr(),
+      selectInput('Obsvar','Plot the index of selected variable and choose when times begin with the red y-axis (quantities are in real terms per capita) :',levels(dataLevel$variable)),
       selectInput('Obsvar1',
-                  'Plot one of the variables used in estimation (annualized here) : ',
+                  'Plot one of the variables used in estimation (rates, or growth rates for quantities, are annualized) : ',
                   obsnames),
       checkboxInput('withoutmean','Demeaned variable (actually used in estimation)',FALSE),
       conditionalPanel(
@@ -31,16 +32,18 @@ shinyUI(pageWithSidebar(
         checkboxInput("rawdataCMR","Yes, it would be wonderful !",FALSE)
       ),
       tags$hr(),
-      downloadButton('downloadDataRaw', 'Download as csv')      
+      downloadButton('downloadDataRaw', 'Download as csv')
     ),
     
     conditionalPanel(
       condition="input.tsp=='cmr'",
-      p("Fiscal policy plays potentially a big role in explaining exit strategies. How original CMR's model take it into account ? Not so good if we look at the public deficit implied by the model.")
+      p("Fiscal policy plays potentially a big role in explaining exit strategies. How original CMR's model take it into account ? Not so good if we look at the public deficit implied by their model."),
+      p("This is why we add government deficit as an observed variable (and a shock on the deficit in the model).")
     ),
     
     conditionalPanel(
       condition="input.tsp=='decompo'",
+      p("Look at the decomposition and the role of the 13 shocks in the variation of the 13 observed variables for Euro Area and the United States."),
       selectInput('Country',
                   'Country : ',
                   c('EA','US')),
@@ -53,6 +56,7 @@ shinyUI(pageWithSidebar(
     
     conditionalPanel(
       condition="input.tsp=='table'",
+      p("Prior mean and standard deviation are the same in both countries."),
       tags$hr(),
       downloadButton('downloadDataTable', 'Download as csv')
     ),
@@ -72,10 +76,10 @@ shinyUI(pageWithSidebar(
   mainPanel(
     tabsetPanel(
       tabPanel("Motivation",
-               h4("Selected Observed Variable"),
+               h4("Index of Selected Observed Variable"),
+               showOutput("cumuLine","nvd3"),
+               h4("Selected Observed Variable Used in Estimation"),
                showOutput('simpleLine','nvd3'),
-               #h4("Cumulative Growth of Selected Observed Variable"),
-               #showOutput("cumuLine","nvd3"),
                value="motiv"),
       tabPanel("CMR Results",
                showOutput("simpleLine2","nvd3"),
@@ -86,9 +90,6 @@ shinyUI(pageWithSidebar(
                tags$hr(),
                h4("The Role of Shocks in Selected Variable"),
                showOutput("focusLine","nvd3"),
-               #tags$hr(),
-               #h4("Cumulative Growth of Selected Observed Variable"),
-               #showOutput("cumuLine2","nvd3"),
                value="decompo"),
       tabPanel("Priors & Posteriors",
                dataTableOutput("table"),

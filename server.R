@@ -3,6 +3,7 @@ library(rCharts)
 
 shinyServer(function(input, output) {
   
+  dataL <- reactive({subset(dataLevel,variable == input$Obsvar)})
   dataR <- reactive({
     if (input$withoutmean){
       if (input$rawdataCMR){
@@ -20,11 +21,21 @@ shinyServer(function(input, output) {
   dataDS <- reactive({rbind(dataD(),
                             dataS(),
                             subset(dataRaw,variable == input$Obsvar2 & country == input$Country & shock == 'rawdata4withoutmean'))})
+
+  output$cumuLine <- renderChart({
+    n <- nPlot(value ~ time, data=dataL(), type = "cumulativeLineChart",group="country")
+    n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
+    n$yAxis(tickFormat ="#!function (d) {return d3.format('.2f')(d);}!#",showMaxMin = FALSE)
+    n$chart(showControls=TRUE,useInteractiveGuideline=TRUE)
+    n$set(dom = 'cumuLine', width = 700,height=400)
+    n
+  })
   
   output$simpleLine <- renderChart({
     n <- nPlot(value ~ time, data=dataR(),type = "lineChart",group="country")
     n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
     n$yAxis(tickFormat ="#!function (d) {return d3.format(',.1%')(d);}!#",showMaxMin = TRUE)
+    n$chart(useInteractiveGuideline=TRUE)
     n$set(dom = 'simpleLine', width = 700,height=400)
     n
   })
@@ -33,18 +44,10 @@ shinyServer(function(input, output) {
     n <- nPlot(value ~ time, data=dataDefSim,type = "lineChart",group="variable")
     n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
     n$yAxis(tickFormat ="#!function (d) {return d3.format(',.1%')(d);}!#",showMaxMin = TRUE)
+    n$chart(useInteractiveGuideline=TRUE)
     n$set(dom = 'simpleLine2', width = 700,height=400)
     n
   })
-  
-#   output$cumuLine <- renderChart({
-#     n <- nPlot(value ~ time, data=dataObserv(), type = "cumulativeLineChart",group="country")
-#     n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
-#     n$yAxis(tickFormat ="#!function (d) {return d3.format(',.1%')(d);}!#",showMaxMin = TRUE)
-#     n$chart(showControls=FALSE,useInteractiveGuideline=TRUE)
-#     n$set(dom = 'cumuLine', width = 700,height=400)
-#     n
-#   })
   
   output$multiBar <- renderChart({
     n <- nPlot(value ~ time, data = dataD(), type = "multiBarChart",group="shock")
@@ -66,8 +69,9 @@ shinyServer(function(input, output) {
   })
   
   output$table <- renderDataTable({
+    dataTable[,-1]<-round(dataTable[,-1],4)
     dataTable
-  })
+  },options=list(iDisplayLength=20,aLengthMenu=list(c(10,20,50),c(10,20,"All"))))
   
   output$downloadDataRaw <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(dataRaw, file)})
   output$downloadDataDecompo <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(dataDecompo,dataSum), file)})
@@ -77,7 +81,7 @@ shinyServer(function(input, output) {
     if (!file.exists("pageviews.Rdata")) pageviews <- 0 else load(file="pageviews.Rdata")
     pageviews <- pageviews + 1
     save(pageviews,file="pageviews.Rdata")
-    paste("Visits:",pageviews)
+    paste("Visits :",pageviews)
   })
 
 })
