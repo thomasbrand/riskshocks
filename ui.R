@@ -6,7 +6,9 @@ shinyUI(pageWithSidebar(
   headerPanel("Great Divergence ?"),
   
   sidebarPanel(
-    
+    tags$head(
+      tags$style(type="text/css", "select { width: 350px; }")
+    ),
     h3("An Analysis of Exit Strategies in Euro Area and the United States"),
     
     p("by",a("Thomas Brand",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Thomas%20Brand"),
@@ -21,10 +23,12 @@ shinyUI(pageWithSidebar(
       p("* What would US policies have produced in EA ?"),
       p("We update the CMR database, compile EA database, add one observed variable (government deficit) and estimate the model for both countries."),
       tags$hr(),
-      selectInput('Obsvar','Plot the index of selected variable and choose when times begin with the red y-axis (quantities are in real terms per capita) :',levels(dataLevel$variable)),
+      selectInput('Obsvar',
+                  'Plot the index of selected variable and choose when times begin with the red y-axis :',
+                  levels(dataLevel$variable)),
       selectInput('Obsvar1',
-                  'Plot one of the variables used in estimation (rates, or growth rates for quantities, are annualized) : ',
-                  obsnames),
+                  'Plot one of the variables used in estimation (all, except interest rate, are in real terms and quantities are per capita) : ',
+                  levels(dataRaw$variable)),
       checkboxInput('withoutmean','Demeaned variable (actually used in estimation)',FALSE),
       conditionalPanel(
         condition="input.withoutmean==true",
@@ -43,13 +47,14 @@ shinyUI(pageWithSidebar(
     
     conditionalPanel(
       condition="input.tsp=='decompo'",
-      p("Look at the decomposition and the role of the 13 shocks in the variation of the 13 observed variables for Euro Area and the United States."),
+      p("With respect to CMR estimation, we add one observed variable (government deficit), make explicit public deficit (adding lump-sump transfers to households), add a measurment error on observed deficit."),
+      p("Now you can have a look at the decomposition and the role of the 12 shocks in the variation of the 13 observed variables for Euro Area and the United States."),
       selectInput('Country',
                   'Country : ',
-                  c('EA','US')),
+                  levels(dataDecompo$country)),
       selectInput('Obsvar2', 
                   'Observed Variable : ',
-                  obsnames),
+                  levels(dataDecompo$variable)),
       tags$hr(),
       downloadButton('downloadDataDecompo', 'Download as csv')
     ),
@@ -76,19 +81,19 @@ shinyUI(pageWithSidebar(
   mainPanel(
     tabsetPanel(
       tabPanel("Motivation",
-               h4("Index of Selected Observed Variable"),
+               h4("Index of",textOutput("captionM"),align="center"),
                showOutput("cumuLine","nvd3"),
-               h4("Selected Observed Variable Used in Estimation"),
+               h4(textOutput("captionM1"),align="center"),
                showOutput('simpleLine','nvd3'),
                value="motiv"),
       tabPanel("CMR Results",
                showOutput("simpleLine2","nvd3"),
                value="cmr"),
       tabPanel("Our Shock Decomposition",
-               h4("The Decomposition of Shocks in Selected Variable"),
+               h4("The Decomposition of Shocks in",textOutput("captionD1"),align="center"),
                showOutput("multiBar","nvd3"),
                tags$hr(),
-               h4("The Role of Shocks in Selected Variable"),
+               h4("The Role of Shocks in",textOutput("captionD2"),align="center"),
                showOutput("focusLine","nvd3"),
                value="decompo"),
       tabPanel("Priors & Posteriors",

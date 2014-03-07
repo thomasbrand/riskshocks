@@ -21,6 +21,27 @@ shinyServer(function(input, output) {
   dataDS <- reactive({rbind(dataD(),
                             dataS(),
                             subset(dataRaw,variable == input$Obsvar2 & country == input$Country & shock == 'rawdata4withoutmean'))})
+  
+  specialtick<-reactive({
+    if (input$Obsvar1 %in% c("Hours worked per capita (log)")){
+      tick<-"#!function (d) {return d3.format('.2f')(d);}!#"
+    } else{
+      tick<-"#!function (d) {return d3.format(',.1%')(d);}!#"
+    }
+  })
+  
+  output$captionM<-renderText({
+    input$Obsvar
+  })
+  output$captionM1<-renderText({
+    input$Obsvar1
+  })
+  output$captionD1<-renderText({
+    input$Obsvar2
+  })
+  output$captionD2<-renderText({
+    input$Obsvar2
+  })
 
   output$cumuLine <- renderChart({
     n <- nPlot(value ~ time, data=dataL(), type = "cumulativeLineChart",group="country")
@@ -34,7 +55,7 @@ shinyServer(function(input, output) {
   output$simpleLine <- renderChart({
     n <- nPlot(value ~ time, data=dataR(),type = "lineChart",group="country")
     n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
-    n$yAxis(tickFormat ="#!function (d) {return d3.format(',.1%')(d);}!#",showMaxMin = TRUE)
+    n$yAxis(tickFormat = specialtick(),showMaxMin = TRUE)
     n$chart(useInteractiveGuideline=TRUE)
     n$set(dom = 'simpleLine', width = 700,height=400)
     n
@@ -52,7 +73,7 @@ shinyServer(function(input, output) {
   output$multiBar <- renderChart({
     n <- nPlot(value ~ time, data = dataD(), type = "multiBarChart",group="shock")
     n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
-    n$yAxis(tickFormat ="#!function (d) {return d3.format(',.1%')(d);}!#",showMaxMin = TRUE)
+    n$yAxis(tickFormat = specialtick(),showMaxMin = TRUE)
     n$chart(showControls=FALSE,stacked=TRUE)
     n$set(dom = 'multiBar', width = 700,height=400)
     n
@@ -61,7 +82,7 @@ shinyServer(function(input, output) {
   output$focusLine <- renderChart({
     n <- nPlot(value ~ time, data = dataDS(), type = "lineWithFocusChart",group="shock")
     n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
-    n$yAxis(tickFormat ="#!function (d) {return d3.format(',.1%')(d);}!#",showMaxMin = FALSE)
+    n$yAxis(tickFormat = specialtick(),showMaxMin = FALSE)
     #n$y2Axis(tickFormat ="#!function (d) {return d3.format(',.1%')(d);}!#",showMaxMin = FALSE)
     n$x2Axis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
     n$set(dom = 'focusLine', width = 700,height=400)
@@ -72,8 +93,9 @@ shinyServer(function(input, output) {
     dataTable[,-1]<-round(dataTable[,-1],4)
     dataTable
   },options=list(iDisplayLength=20,aLengthMenu=list(c(10,20,50),c(10,20,"All"))))
-  
-  output$downloadDataRaw <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(dataRaw, file)})
+
+  dataLevel["shock"]<-"index"
+  output$downloadDataRaw <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(dataRaw,dataLevel), file)})
   output$downloadDataDecompo <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(dataDecompo,dataSum), file)})
   output$downloadDataTable <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(dataTable, file)})
   
@@ -85,8 +107,5 @@ shinyServer(function(input, output) {
   })
 
 })
-
-
-
 
 
