@@ -17,17 +17,17 @@ shinyUI(pageWithSidebar(
     tags$hr(),
     conditionalPanel(
       condition="input.tsp=='motiv'",
-      p("CMR (2014) show that risk shocks are essential to explain fluctuations of GDP in the US, especially during the Great Recession. Based on their model, we address 3 more questions : "),
+      p("CMR (2014) show that risk shocks are essential to explain fluctuations of GDP in the US, especially during the Great Recession. Based on their model, we address 3 more questions: "),
       p("* Is the decline of risk shocks essential to explain recovery ?"),
       p("* Is it the same phenomenon in EA ?"),
       p("* What would US policies have produced in EA ?"),
       p("We update the CMR database, compile EA database, add one observed variable (government deficit) and estimate the model for both countries."),
       tags$hr(),
       selectInput('Obsvar',
-                  'Plot the index of selected variable and choose when times begin with the red y-axis :',
+                  'Plot the index of selected variable and choose when times begin with the red y-axis:',
                   levels(dataLevel$variable)),
       selectInput('Obsvar1',
-                  'Plot one of the variables used in estimation (all, except interest rate, are in real terms and quantities are per capita) : ',
+                  'Plot one of the variables used in estimation (all, except interest rate, are in real terms and quantities are per capita): ',
                   levels(dataRaw$variable)),
       checkboxInput('withoutmean','Demeaned variable (actually used in estimation)',FALSE),
       conditionalPanel(
@@ -40,9 +40,15 @@ shinyUI(pageWithSidebar(
     ),
     
     conditionalPanel(
-      condition="input.tsp=='cmr'",
-      p("Fiscal policy plays potentially a big role in explaining exit strategies. How original CMR's model take it into account ? Not so good if we look at the public deficit implied by their model."),
-      p("This is why we add government deficit as an observed variable (and a shock on the deficit in the model).")
+      condition="input.tsp=='result'",
+      p("The first results we present are the role of the selected shock in explaining fluctuations of the observed variables (annualized and without mean), for both countries."),
+      selectInput('Country2',
+                  "Country",
+                  choices=levels(dataDecompo$country)),
+      selectInput('Shock', 
+                  'Shock: ',
+                  choices=levels(dataDecompo$shock)[-1],
+                  selected='risk')
     ),
     
     conditionalPanel(
@@ -50,10 +56,10 @@ shinyUI(pageWithSidebar(
       p("With respect to CMR estimation, we add one observed variable (government deficit), make explicit public deficit (adding lump-sump transfers to households), add a measurment error on observed deficit."),
       p("Now you can have a look at the decomposition and the role of the 12 shocks in the variation of the 13 observed variables for Euro Area and the United States."),
       selectInput('Country',
-                  'Country : ',
+                  'Country: ',
                   levels(dataDecompo$country)),
       selectInput('Obsvar2', 
-                  'Observed Variable : ',
+                  'Observed Variable: ',
                   levels(dataDecompo$variable)),
       tags$hr(),
       downloadButton('downloadDataDecompo', 'Download as csv')
@@ -68,8 +74,7 @@ shinyUI(pageWithSidebar(
 
     conditionalPanel(
       condition="input.tsp=='counterfact'",
-      p("Assessing the role of shocks, policies and structures"),
-      p("(what would have happened if US fiscal and monetary policies were implemented in EA ?)")
+      p("Assessing the role of shocks, policies and structures: what would have happened if US fiscal and monetary policies were implemented in EA ?")
     ),
     
     tags$hr(),
@@ -83,15 +88,17 @@ shinyUI(pageWithSidebar(
       tabPanel("Motivation",
                h4("Index of",textOutput("captionM"),align="center"),
                showOutput("cumuLine","nvd3"),
+               tags$hr(),
                h4(textOutput("captionM1"),align="center"),
                showOutput('simpleLine','nvd3'),
                value="motiv"),
-      tabPanel("CMR Results",
-               showOutput("simpleLine2","nvd3"),
-               value="cmr"),
-      tabPanel("Our Shock Decomposition",
+      tabPanel("First Results",
+               h4("The Role of the Selected Shock in Observed Variables",align="center"),
+               plotOutput("facetLine",height="700px",width="85%"),
+               value="result"),
+      tabPanel("Shock Decomposition",
                h4("The Decomposition of Shocks in",textOutput("captionD1"),align="center"),
-               showOutput("multiBar","nvd3"),
+               showOutput("multibar","nvd3"),
                tags$hr(),
                h4("The Role of Shocks in",textOutput("captionD2"),align="center"),
                showOutput("focusLine","nvd3"),
@@ -102,6 +109,8 @@ shinyUI(pageWithSidebar(
       tabPanel("Counterfactual",
                value="counterfact"),
       tabPanel("About",
+               h4("Data"),
+               includeMarkdown("data_description.Rmd"),
                h4("References"),
                p("Published version of Christiano, Motto and Rostagno (2014) is available in",a("AER website",href="https://www.aeaweb.org/articles.php?doi=10.1257/aer.104.1.27"),"with technical appendix and Dynare code."),
                h4("Thanks"),
