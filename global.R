@@ -8,7 +8,7 @@ library(markdown)
 library(devtools)
 library(ggplot2)
 
-if(!("rCharts" %in% installed.packages()[,"Package"])) install_github("rCharts","ramnathv",ref="dev")
+if(!("rCharts" %in% installed.packages()[,"Package"])) install_github("rCharts","ramnathv")
 library(rCharts)
 
 load("data.RData")
