@@ -48,7 +48,8 @@ shinyUI(pageWithSidebar(
       selectInput('Shock', 
                   'Shock: ',
                   choices=levels(dataDecompo$shock)[-1],
-                  selected='risk')
+                  selected='risk'),
+      downloadButton("downloadGraphResult", "Download Graphic")
     ),
     
     conditionalPanel(

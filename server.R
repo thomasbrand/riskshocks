@@ -124,7 +124,7 @@ shinyServer(function(input, output) {
   })
   
   output$table <- renderDataTable({
-    dataTable[,-1]<-round(dataTable[,-1],4)
+    dataTable[,-c(1,2)]<-round(dataTable[,-c(1,2)],4)
     dataTable
   },options=list(iDisplayLength=20,aLengthMenu=list(c(10,20,50),c(10,20,"All"))))
 
@@ -133,6 +133,14 @@ shinyServer(function(input, output) {
   output$downloadDataDecompo <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(dataDecompo,dataSum), file)})
   output$downloadDataTable <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(dataTable, file)})
   
+  output$downloadGraphResult <- downloadHandler(filename = 'plot.pdf',
+                                                content = function(file){
+                                                  pdf(file = file)
+                                                  #doPlot(col=1,margins=c(8,8,8,1),cex.ax=1.3,cex.lb=1.5,cex.mn=2,cex.lg=1.8)
+                                                  p
+                                                  dev.off()
+                                                })
+
   output$pageviews <-  renderText({
     if (!file.exists("pageviews.Rdata")) pageviews <- 0 else load(file="pageviews.Rdata")
     pageviews <- pageviews + 1
