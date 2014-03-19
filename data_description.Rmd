@@ -1,7 +1,7 @@
 We use quarterly observation on 13 variables covering the period 1987Q1-2013Q2. These include 8 variables that are standard in bayesian estimation of DSGE models: GDP, consumption, investment, inflation, wage, price of investment, hours worked and short-term risk-free rate. As CMR, we also use four financial variables: credit, slope of the term structure of interest rates, entrepreneurial networth and credit spread. We add government deficit.
 * GDP
     * US : Real Gross Domestic Product, Billions of Chained 2009 Dollars, Quarterly, Seasonally Adjusted Annual Rate (Fred: [GDPC1](http://research.stlouisfed.org/fred2/series/GDPC1))
-    * EA : 
+    * EA : Real Gross Domestic Product, NAWM database (YER) chained with 
 * Consumption
     * US : Real Personal Consumption Expenditures: Nondurable Goods + Real Personal Consumption Expenditures: Services, Billions of Chained 2009 Dollars, Quarterly, Seasonally Adjusted Annual Rate (Fred: [PCNDGC96](http://research.stlouisfed.org/fred2/series/PCNDGC96) + [PCESVC96](http://research.stlouisfed.org/fred2/series/PCESVC96) and before 1999, BEA : [NIPA Table 2.3.3](http://www.bea.gov/iTable/iTable.cfm?ReqID=9&step=1#reqid=9&step=1&isuri=1))
     * EA : 

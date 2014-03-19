@@ -17,16 +17,17 @@ shinyUI(pageWithSidebar(
     tags$hr(),
     conditionalPanel(
       condition="input.tsp=='motiv'",
-      p("CMR (2014) show that risk shocks are essential to explain fluctuations of GDP in the US, especially during the Great Recession. Based on their model, we address 3 more questions: "),
+      p("CMR (2014) show that risk shocks are essential to explain fluctuations of GDP in the US, especially during the Great Recession. Based on their model, we address three more questions: "),
       p("* Is the decline of risk shocks essential to explain recovery ?"),
       p("* Is it the same phenomenon in EA ?"),
       p("* What would US policies have produced in EA ?"),
-      p("We update the CMR database, compile EA database, add one observed variable (government deficit) and estimate the model for both countries."),
+      p("We update the CMR database, compile EA database and estimate the model for both countries."),
       tags$hr(),
-      selectInput('Obsvar',
+      selectInput('ObsMotiv1',
                   'Plot the index of selected variable and choose when times begin with the red y-axis:',
                   levels(dataLevel$variable)),
-      selectInput('Obsvar1',
+      #sliderInput('yrs','Year range:',1988,2013,c(2007,2013),step=1),
+      selectInput('ObsMotiv2',
                   'Plot one of the variables used in estimation (all, except interest rate, are in real terms and quantities are per capita): ',
                   levels(dataRaw$variable)),
       checkboxInput('withoutmean','Demeaned variable (actually used in estimation)',FALSE),
@@ -36,41 +37,68 @@ shinyUI(pageWithSidebar(
         checkboxInput("rawdataCMR","Yes, it would be wonderful !",FALSE)
       ),
       tags$hr(),
-      downloadButton('downloadDataRaw', 'Download as csv')
+      downloadButton('downloadDataRaw', 'Download Data as csv')
     ),
     
     conditionalPanel(
       condition="input.tsp=='result'",
-      p("The first results we present are the role of the selected shock in explaining fluctuations of the observed variables (annualized and without mean), for both countries."),
-      selectInput('Country2',
-                  "Country",
-                  choices=levels(dataDecompo$country)),
-      selectInput('Shock', 
+      p("There are three main results: "),
+      p('* The reversal of risk shocks drives the US recovery and is the key determinant of recent economic growth.'),
+      p('* Risk shocks contributed less to the contraction in EA than in the US, but they are at the origin of the double dip pattern of the crisis.'),
+      p('* Differences in fiscal and conventional monetary policies explain a part of the divergence during the contraction, but play no role in the recent divergence.'),
+      tags$hr(),
+#       selectInput('CountryRes',
+#                   'Country: ',
+#                   c("Euro Area",'United States')),
+      selectInput('ObsRes',
+                  'Observed variable: ',
+                  levels(dataLevel$variable)),
+      selectInput('ShockRes', 
                   'Shock: ',
-                  choices=levels(dataDecompo$shock)[-1],
+                  levels(dataDecompo$shock)[-1],
+                  selected='risk')
+#       ,
+#       tags$hr(),
+#       downloadButton('downloadDataRaw', 'Download Data as csv')
+    ),
+    
+    conditionalPanel(
+      condition="input.tsp=='facet'",
+      p('Here we present the role of the selected shock in explaining fluctuations of the observed variables (annualized and without mean), for both countries.'),
+      selectInput('CountryFacet',
+                  "Country: ",
+                  c("Euro Area",'United States')),
+      selectInput('ShockFacet', 
+                  'Shock: ',
+                  levels(dataDecompo$shock)[-1],
                   selected='risk'),
-      downloadButton("downloadGraphResult", "Download Graphic")
+      tags$hr(),
+      downloadButton("downloadGraphResult", "Download Graphic as pdf")
     ),
     
     conditionalPanel(
       condition="input.tsp=='decompo'",
-      p("With respect to CMR estimation, we add one observed variable (government deficit), make explicit public deficit (adding lump-sump transfers to households), add a measurment error on observed deficit."),
-      p("Now you can have a look at the decomposition and the role of the 12 shocks in the variation of the 13 observed variables for Euro Area and the United States."),
-      selectInput('Country',
+      p("Now you can have a look at the decomposition and the role of the 12 shocks in the variation of the 12 observed variables for Euro Area and the United States."),
+      selectInput('CountryDecompo',
                   'Country: ',
-                  levels(dataDecompo$country)),
-      selectInput('Obsvar2', 
+                  c("Euro Area",'United States')),
+      selectInput('ObsDecompo', 
                   'Observed Variable: ',
                   levels(dataDecompo$variable)),
       tags$hr(),
-      downloadButton('downloadDataDecompo', 'Download as csv')
+      downloadButton('downloadDataDecompo', 'Download Data as csv')
     ),
     
     conditionalPanel(
       condition="input.tsp=='table'",
       p("Prior mean and standard deviation are the same in both countries."),
       tags$hr(),
-      downloadButton('downloadDataTable', 'Download as csv')
+      checkboxGroupInput("varTable",
+                         "Choose information about prior/posterior you want to display in the table: ",
+                         names(dataTable)[-1],
+                         selected=c("Prior density","Prior mean","Post. mode EA","Post. mode US")),
+      tags$hr(),
+      downloadButton('downloadDataTable', 'Download Data as csv')
     ),
 
     conditionalPanel(
@@ -87,16 +115,20 @@ shinyUI(pageWithSidebar(
   mainPanel(
     tabsetPanel(
       tabPanel("Motivation",
-               h4("Index of",textOutput("captionM"),align="center"),
-               showOutput("cumuLine","nvd3"),
+               h4("Index of",textOutput("captionMotiv1"),align="center"),
+               showOutput("cumuLineMotiv","nvd3"),
                tags$hr(),
-               h4(textOutput("captionM1"),align="center"),
-               showOutput('simpleLine','nvd3'),
+               h4(textOutput("captionMotiv2"),align="center"),
+               showOutput('simpleLineMotiv','nvd3'),
                value="motiv"),
-      tabPanel("First Results",
-               h4("The Role of the Selected Shock in Observed Variables",align="center"),
-               plotOutput("facetLine",height="700px",width="85%"),
+      tabPanel("Results",
+               h4("Index of",textOutput("captionRes"),align="center"),
+               showOutput("cumuLineRes","nvd3"),
                value="result"),
+      tabPanel("Role of Shocks",
+               h4("The Role of the Selected Shock in Observed Variables",align="center"),
+               div(plotOutput("facetLine",height="700px",width="760px"),align="center"),
+               value="facet"),
       tabPanel("Shock Decomposition",
                h4("The Decomposition of Shocks in",textOutput("captionD1"),align="center"),
                showOutput("multibar","nvd3"),
@@ -109,14 +141,9 @@ shinyUI(pageWithSidebar(
                value="table"),
       tabPanel("Counterfactual",
                value="counterfact"),
-      tabPanel("About",
-               h4("Data"),
+      tabPanel("Data",
                includeMarkdown("data_description.Rmd"),
-               h4("References"),
-               p("Published version of Christiano, Motto and Rostagno (2014) is available in",a("AER website",href="https://www.aeaweb.org/articles.php?doi=10.1257/aer.104.1.27"),"with technical appendix and Dynare code."),
-               h4("Thanks"),
-               p("rCharts"),
-               value="about"),
+               value="data"),
       id="tsp"
     )
   )
