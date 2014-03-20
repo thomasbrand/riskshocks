@@ -4,21 +4,20 @@ library(ggplot2)
 
 shinyServer(function(input, output) {
   
-  dataL <- reactive({subset(dataLevel,variable == input$ObsMotiv1)})
+  dataL <- reactive({subset(dataLevel,variable == input$ObsMotiv1  & time>=input$TimeMotiv[1] & time<=input$TimeMotiv[2])})
   dataR <- reactive({
     if (input$withoutmean){
       if (input$rawdataCMR){
-        data <- rbind(subset(dataRaw,variable == input$ObsMotiv2 & shock %in% c('rawdata (without mean)','rawdataCMR')))
+        data <- rbind(subset(dataRaw,variable == input$ObsMotiv2 & shock %in% c('rawdata (without mean)','rawdataCMR') & time>=input$TimeMotiv[1] & time<=input$TimeMotiv[2]))
       } else{
-        data <- rbind(subset(dataRaw,variable == input$ObsMotiv2 & shock == 'rawdata (without mean)'))
+        data <- rbind(subset(dataRaw,variable == input$ObsMotiv2 & shock == 'rawdata (without mean)' & time>=input$TimeMotiv[1] & time<=input$TimeMotiv[2]))
       }
     } else{
-      data <- subset(dataRaw,variable == input$ObsMotiv2 & shock == 'rawdata (with mean)')
+      data <- subset(dataRaw,variable == input$ObsMotiv2 & shock == 'rawdata (with mean)' & time>=input$TimeMotiv[1] & time<=input$TimeMotiv[2])
     }
   })
   
-  dataSimLev$new <- paste(dataSimLev$shock,dataSimLev$country,sep=", ")
-  dataSL <- reactive({subset(dataSimLev,variable == input$ObsRes & shock %in% c(input$ShockRes,'sum of shocks') & time>"2007-09-01")})
+  dataSL <- reactive({subset(dataSimLev,variable == input$ObsRes & shock %in% c(input$ShockRes,'sum of shocks') & time>=input$TimeRes[1] & time<=input$TimeRes[2])})
   
   dataF <- reactive({
     rbind(subset(dataDecompo,shock == input$ShockFacet & country == input$CountryFacet),
@@ -31,9 +30,17 @@ shinyServer(function(input, output) {
   dataDS <- reactive({rbind(dataD(),
                             dataS(),
                             subset(dataRaw,variable == input$ObsDecompo & country == input$CountryDecompo & shock == 'rawdata (without mean)'))})
+  
+  dataC <- reactive({
+    if (input$VarCount=="struc"){
+      data <- subset(dataCount,country_model==input$Country_model)
+    } else{
+      data <- subset(dataCount,country_shock==input$Country_shock)
+    }
+  })
     
   specialtickM<-reactive({
-    if (input$ObsMotiv2 == "Hours worked per capita (log)"){
+    if (input$ObsMotiv2 == "Hours worked (log)"){
       tick<-"#!function (d) {return d3.format('.2f')(d);}!#"
     } else{
       tick<-"#!function (d) {return d3.format(',.1%')(d);}!#"
@@ -41,7 +48,7 @@ shinyServer(function(input, output) {
   })
   
   specialtickD<-reactive({
-    if (input$ObsDecompo == "Hours worked per capita (log)"){
+    if (input$ObsDecompo == "Hours worked (log)"){
       tick<-"#!function (d) {return d3.format('.2f')(d);}!#"
     } else{
       tick<-"#!function (d) {return d3.format(',.1%')(d);}!#"
@@ -67,6 +74,22 @@ shinyServer(function(input, output) {
     input$ObsDecompo
   })
 
+  output$captionC <- renderText({
+    if (input$VarCount=="struc"){
+      if (input$Country_model=="Euro Area"){
+        "EA specific economic structure hit by all shocks from EA and from US"
+      } else{
+        "US specific economic structure hit by all shocks from EA and from US"
+      }
+    } else{
+    if (input$Country_shock=="Euro Area"){
+        "All EA shocks hitting EA and US specific economic structure"
+      } else{
+        "All US shocks hitting EA and US specific economic structure"
+      }
+    }
+  })
+  
   output$cumuLineMotiv <- renderChart({
     n <- nPlot(value ~ time, data=dataL(), type = "cumulativeLineChart",group="country")
     n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=FALSE)
@@ -94,10 +117,10 @@ shinyServer(function(input, output) {
     n
   })
   
-  doPlot <- function(text_size=11){
+  doPlotR <- function(text_size=11){
     p <- ggplot(data=dataF(),aes(x=time,y=value,color=shock,group=shock))+
       geom_line(size=0.8)+scale_color_manual(values=c('#1F77B4','#B6CCEA'))+
-      facet_wrap(~variable,nrow=5,scales="free_y")+
+      facet_wrap(~variable,nrow=4,scales="free_y")+
       xlab(NULL) + ylab(NULL)+theme_bw()+
       theme(strip.background=element_blank(),
             strip.text=element_text(size=text_size),
@@ -109,30 +132,31 @@ shinyServer(function(input, output) {
     print(p)
   }
   
-  output$facetLine <- renderPlot({
-    doPlot()
-    #     p <- ggplot(data=dataF(),aes(x=time,y=value,color=shock,group=shock))+
-#       geom_line(size=0.8)+scale_color_manual(values=c('#1F77B4','#B6CCEA'))+
-#       facet_wrap(~variable,nrow=5,scales="free_y")+
-#       xlab(NULL) + ylab(NULL)+theme_bw()+
-#       theme(strip.background=element_blank(),
-#             strip.text.x=element_text(size=11),
-#             legend.key=element_rect(colour="white"),
-#             legend.position="bottom",
-#             legend.title=element_blank(),
-#             legend.text=element_text(size=11))
-#     print(p)
-    #print(p)
-#     data$time<-as.character(data$time)
-#     r <- rPlot(value ~ time, color = 'shock', data = data, type = 'line',group='shock')
-#     r$facet(var = 'variable', type = 'wrap', cols = 2)
-#     r$guides(
-#       x=list(title=""),
-#       y=list(title="",min=0,max=0.05))
-#     )
-#     r$set(dom = 'facetLine', width = 700,height=800,legendPosition="bottom")
-#     r
-    
+  output$facetLineR <- renderPlot({
+    doPlotR()  
+  })
+  
+  doPlotC <- function(text_size=11){
+    if (input$VarCount=="struc"){
+      p<-ggplot(data=dataC(),aes(x=time,y=value,color=country_shock,group=country_shock))+
+        geom_line(size=0.8)+facet_wrap(~variable,nrow=4,scales="free_y")+scale_color_manual(values=c('#1F77B4','#B6CCEA'))
+    } else{
+      p<-ggplot(data=dataC(),aes(x=time,y=value,color=country_model,group=country_model))+
+        geom_line(size=0.8)+facet_wrap(~variable,nrow=4,scales="free_y")+scale_color_manual(values=c('#1F77B4','#B6CCEA'))
+    }
+    p <- p + xlab(NULL) + ylab(NULL)+theme_bw()+
+      theme(strip.background=element_blank(),
+            strip.text=element_text(size=text_size),
+            legend.key=element_rect(colour="white"),
+            legend.position="bottom",
+            legend.title=element_blank(),
+            legend.text=element_text(size=text_size),
+            axis.text=element_text(size=text_size))
+    print(p)
+  }
+  
+  output$facetLineC <- renderPlot({
+    doPlotC()  
   })
   
   output$multibar <- renderChart({
@@ -161,16 +185,24 @@ shinyServer(function(input, output) {
 
   dataLevel["shock"]<-"index"
   output$downloadDataRaw <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(dataRaw,dataLevel), file)})
+  output$downloadDataRes <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(dataSimLev, file)})
   output$downloadDataDecompo <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(dataDecompo,dataSum), file)})
   output$downloadDataTable <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(dataTable, file)})
   
-  output$downloadGraphResult <- downloadHandler(filename = 'plot.pdf',
+  output$downloadGraphRes <- downloadHandler(filename = 'plot.pdf',
                                                 content = function(file){
                                                   pdf(file = file)
-                                                  doPlot(text_size=7)
+                                                  doPlotR(text_size=7)
                                                   dev.off()
                                                 })
 
+  output$downloadGraphC <- downloadHandler(filename = 'plot.pdf',
+                                             content = function(file){
+                                               pdf(file = file)
+                                               doPlotC(text_size=7)
+                                               dev.off()
+                                             })
+  
   output$pageviews <-  renderText({
     if (!file.exists("pageviews.Rdata")) pageviews <- 0 else load(file="pageviews.Rdata")
     pageviews <- pageviews + 1

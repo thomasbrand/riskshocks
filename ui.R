@@ -23,10 +23,10 @@ shinyUI(pageWithSidebar(
       p("* What would US policies have produced in EA ?"),
       p("We update the CMR database, compile EA database and estimate the model for both countries."),
       tags$hr(),
+      dateRangeInput('TimeMotiv','Date range:',start="2007-12-01",end="2013-06-01",min="1988-03-01",max="2013-06-01"),
       selectInput('ObsMotiv1',
-                  'Plot the index of selected variable and choose when times begin with the red y-axis:',
+                  'Plot the index of selected variable and choose where the zero is with the red y-axis:',
                   levels(dataLevel$variable)),
-      #sliderInput('yrs','Year range:',1988,2013,c(2007,2013),step=1),
       selectInput('ObsMotiv2',
                   'Plot one of the variables used in estimation (all, except interest rate, are in real terms and quantities are per capita): ',
                   levels(dataRaw$variable)),
@@ -47,19 +47,16 @@ shinyUI(pageWithSidebar(
       p('* Risk shocks contributed less to the contraction in EA than in the US, but they are at the origin of the double dip pattern of the crisis.'),
       p('* Differences in fiscal and conventional monetary policies explain a part of the divergence during the contraction, but play no role in the recent divergence.'),
       tags$hr(),
-#       selectInput('CountryRes',
-#                   'Country: ',
-#                   c("Euro Area",'United States')),
+      dateRangeInput('TimeRes','Date range:',start="2007-12-01",end="2013-06-01",min="1988-03-01",max="2013-06-01"),
       selectInput('ObsRes',
                   'Observed variable: ',
                   levels(dataLevel$variable)),
       selectInput('ShockRes', 
                   'Shock: ',
                   levels(dataDecompo$shock)[-1],
-                  selected='risk')
-#       ,
-#       tags$hr(),
-#       downloadButton('downloadDataRaw', 'Download Data as csv')
+                  selected='risk'),
+      tags$hr(),
+      downloadButton('downloadDataRes', 'Download Data as csv')
     ),
     
     conditionalPanel(
@@ -73,7 +70,7 @@ shinyUI(pageWithSidebar(
                   levels(dataDecompo$shock)[-1],
                   selected='risk'),
       tags$hr(),
-      downloadButton("downloadGraphResult", "Download Graphic as pdf")
+      downloadButton("downloadGraphRes", "Download Graphic as pdf")
     ),
     
     conditionalPanel(
@@ -96,14 +93,35 @@ shinyUI(pageWithSidebar(
       checkboxGroupInput("varTable",
                          "Choose information about prior/posterior you want to display in the table: ",
                          names(dataTable)[-1],
-                         selected=c("Prior density","Prior mean","Post. mode EA","Post. mode US")),
+                         selected=c("Prior mean","Post. mode EA","Post. mode US")),
       tags$hr(),
       downloadButton('downloadDataTable', 'Download Data as csv')
     ),
 
     conditionalPanel(
       condition="input.tsp=='counterfact'",
-      p("Assessing the role of shocks, policies and structures: what would have happened if US fiscal and monetary policies were implemented in EA ?")
+      p("Assessing the role of shocks, policies and structures: what would have happened if US fiscal and monetary policies were implemented in EA ?"),
+      radioButtons("VarCount",
+                   "You want to see:",
+                   list("one country economic structure hit by all shocks from different countries"="struc",
+                        "all shocks from one country hitting different country economic structures"="shock"),
+                   "struc"),
+      conditionalPanel(
+        condition="input.VarCount=='struc'",
+        radioButtons("Country_model",
+                     "Which economic structure you want to consider:",
+                     c("Euro Area","United States")
+                     )
+        ),
+      conditionalPanel(
+        condition="input.VarCount=='shock'",
+        radioButtons("Country_shock",
+                     "From which country are the shocks you want to consider:",
+                     c("Euro Area","United States")
+        )
+      ),
+      tags$hr(),
+      downloadButton("downloadGraphC", "Download Graphic as pdf")
     ),
     
     tags$hr(),
@@ -127,7 +145,7 @@ shinyUI(pageWithSidebar(
                value="result"),
       tabPanel("Role of Shocks",
                h4("The Role of the Selected Shock in Observed Variables",align="center"),
-               div(plotOutput("facetLine",height="700px",width="760px"),align="center"),
+               div(plotOutput("facetLineR",height="700px",width="760px"),align="center"),
                value="facet"),
       tabPanel("Shock Decomposition",
                h4("The Decomposition of Shocks in",textOutput("captionD1"),align="center"),
@@ -140,10 +158,12 @@ shinyUI(pageWithSidebar(
                dataTableOutput("table"),
                value="table"),
       tabPanel("Counterfactual",
+               h4(textOutput("captionC"),align="center"),
+               div(plotOutput("facetLineC",height="700px",width="760px"),align="center"),
                value="counterfact"),
-      tabPanel("Data",
-               includeMarkdown("data_description.Rmd"),
-               value="data"),
+#       tabPanel("Data",
+#                includeMarkdown("data_description.Rmd"),
+#                value="data"),
       id="tsp"
     )
   )
