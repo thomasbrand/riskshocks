@@ -161,9 +161,9 @@ shinyUI(pageWithSidebar(
                h4(textOutput("captionC"),align="center"),
                div(plotOutput("facetLineC",height="700px",width="760px"),align="center"),
                value="counterfact"),
-#       tabPanel("Data",
-#                includeMarkdown("data_description.Rmd"),
-#                value="data"),
+      tabPanel("Data",
+               includeMarkdown("data_description.md"),
+               value="data"),
       id="tsp"
     )
   )
