@@ -2,7 +2,7 @@ library(shiny)
 library(rCharts)
 library(ggplot2)
 
-shinyServer(function(input, output) {
+shinyServer(function(input, output,session) {
   
   dataL <- reactive({subset(dataLevel,variable == input$ObsMotiv1  & time>=input$TimeMotiv[1] & time<=input$TimeMotiv[2])})
   dataR <- reactive({
@@ -209,6 +209,11 @@ shinyServer(function(input, output) {
     save(pageviews,file="pageviews.Rdata")
     paste("Visits:",pageviews)
   })
+  
+  output$activeTab <- reactive({
+    return(input$tsp)
+  })
+  outputOptions(output, 'activeTab', suspendWhenHidden=F)
 
 })
 

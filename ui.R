@@ -3,21 +3,20 @@ library(rCharts)
 
 shinyUI(pageWithSidebar(
   
-  headerPanel("Great Divergence ?"),
-  
+  div(h2("Great Divergence ?",align="center"),
+      h4("An Analysis of Exit Strategies in Euro Area and the United States",align="center"),
+      div(a("Thomas Brand",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Thomas%20Brand"),
+      "and",a("Fabien Tripier",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Fabien%20Tripier"),align="center"),
+      br()
+      ),
+
   sidebarPanel(
-    tags$head(
-      tags$style(type="text/css", "select { width: 350px; }")
-    ),
-    h3("An Analysis of Exit Strategies in Euro Area and the United States"),
-    
-    p("by",a("Thomas Brand",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Thomas%20Brand"),
-      "and",a("Fabien Tripier",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Fabien%20Tripier")),
-    
-    tags$hr(),
     conditionalPanel(
       condition="input.tsp=='motiv'",
-      p("CMR (2014) show that risk shocks are essential to explain fluctuations of GDP in the US, especially during the Great Recession. Based on their model, we address three more questions: "),
+      p("Christiano, Motto and Rostagno (2014,", a("AER)",href="https://www.aeaweb.org/articles.php?doi=10.1257/aer.104.1.27"),
+        "show that risk shocks are essential to explain fluctuations of GDP in the US, especially during the Great Recession.",
+        helpPopup('Definition of risk','In a model à la Bernanke, Gertler and Gilchrist (1999), entrepreneurs combine their own resources with loans to acquire raw capital. They then convert raw capital into effective capital in a process characterized by idiosyncratic uncertainty. CMR (2014) refer to the magnitude of this uncertainty as risk.')),
+      p("Based on their model, we address three more questions: "),
       p("* Is the decline of risk shocks essential to explain recovery ?"),
       p("* Is it the same phenomenon in EA ?"),
       p("* What would US policies have produced in EA ?"),
@@ -126,12 +125,12 @@ shinyUI(pageWithSidebar(
     
     tags$hr(),
     p("Source code available at",a("GitHub",href="https://github.com/thomasbrand/riskshocks"),textOutput("pageviews")),
-    a(img(src="http://www.cepii.fr/CEPII/css/img/header/logo_header_fr.png", width="180", height="64"),href="http://www.cepii.fr")
+    a(img(src="http://www.cepii.fr/CEPII/css/img/header/logo_header_en.png", width="180", height="64"),href="http://www.cepii.fr")
   ),
   
   
-  mainPanel(
-    tabsetPanel(
+  mainPanel(    
+    tabsetPanel(      
       tabPanel("Motivation",
                h4("Index of",textOutput("captionMotiv1"),align="center"),
                showOutput("cumuLineMotiv","nvd3"),
@@ -165,6 +164,16 @@ shinyUI(pageWithSidebar(
                includeMarkdown("data_description.md"),
                value="data"),
       id="tsp"
-    )
+    ),
+    tagList(
+      tags$head(
+        tags$link(rel="stylesheet", type="text/css",href="style.css"),
+        tags$script(type="text/javascript", src = "busy.js")
+      )
+    ),      
+    div(class = "busy",
+        p("Calculation in progress.."),
+        img(src="ajaxloaderq.gif")
+    )    
   )
 ))
