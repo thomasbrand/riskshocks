@@ -3,7 +3,7 @@ library(rCharts)
 
 shinyUI(pageWithSidebar(
   
-  div(h2("Great Divergence ?",align="center"),
+  div(h2("Great Divergence and Risk Shocks",align="center"),
       h4("An Analysis of Exit Strategies in Euro Area and the United States",align="center"),
       div(a("Thomas Brand",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Thomas%20Brand"),
       "and",a("Fabien Tripier",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Fabien%20Tripier"),align="center"),
@@ -11,6 +11,8 @@ shinyUI(pageWithSidebar(
       ),
 
   sidebarPanel(
+    br(),
+    
     conditionalPanel(
       condition="input.tsp=='motiv'",
       p("Christiano, Motto and Rostagno (2014,", a("AER)",href="https://www.aeaweb.org/articles.php?doi=10.1257/aer.104.1.27"),
@@ -123,6 +125,14 @@ shinyUI(pageWithSidebar(
       downloadButton("downloadGraphC", "Download Graphic as pdf")
     ),
     
+    conditionalPanel(
+      condition="input.tsp=='data'",
+      p("We use quarterly observation on 12 variables covering the period 1987Q1-2013Q2. These include 8 variables that are standard in bayesian estimation of DSGE models: GDP, consumption, investment, inflation, wage, price of investment, hours worked and short-term risk-free rate."),
+      p("As CMR, we also use four financial variables: credit, slope of the term structure of interest rates, entrepreneurial networth and credit spread."),
+      p("For Euro case, we use the Area-wide Model (AWM) database, up to 2010Q4. We then link, where it is feasible, the data contained in the orginal AWM database to the official euro area data.",
+        helpPopup("AWM Database","The original version is the ECB working paper No. 42: ‘An Area-wide Model (AWM) for the euro area’ by Gabriel Fagan, Jérôme Henry and Ricardo Mestre (January 2001). Here we use the 11th update of the AWM database. It has been constructed using both euro area data reported in the ECB Monthly Bulletin and other ECB and Eurostat data where available."))
+    ),
+    
     tags$hr(),
     p("Source code available at",a("GitHub",href="https://github.com/thomasbrand/riskshocks"),textOutput("pageviews")),
     a(img(src="http://www.cepii.fr/CEPII/css/img/header/logo_header_en.png", width="180", height="64"),href="http://www.cepii.fr")
@@ -161,7 +171,8 @@ shinyUI(pageWithSidebar(
                div(plotOutput("facetLineC",height="700px",width="760px"),align="center"),
                value="counterfact"),
       tabPanel("Data",
-               includeMarkdown("data_description.md"),
+               h4('Sources for the 12 variables used in estimation (plus the population)',align='center'),
+               uiOutput("datadesc"),
                value="data"),
       id="tsp"
     ),

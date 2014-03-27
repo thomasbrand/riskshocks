@@ -1,0 +1,44 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+  * GDP  
+    * US : Real Gross Domestic Product, Billions of Chained 2009 Dollars, Quarterly, Seasonally Adjusted Annual Rate (Fred: [GDPC1](http://research.stlouisfed.org/fred2/series/GDPC1))  
+    * EA : Real Gross Domestic Product (AWM: YER), up to 2010Q4, linked with Gross domestic product at market price, Chain linked volumes, reference year 2005, Quarterly, Working day and seasonally adjusted, EA 17 fixed composition (BCE: [ESA.Q.I6.Y.0000.B1QG00.1000.TTTT.L.U.A](http://sdw.ecb.europa.eu/quickview.do?SERIES_KEY=119.ESA.Q.I6.Y.0000.B1QG00.1000.TTTT.L.U.A))  
+  * Consumption  
+    * US : Real Personal Consumption Expenditures: Nondurable Goods + Real Personal Consumption Expenditures: Services, Billions of Chained 2009 Dollars, Quarterly, Seasonally Adjusted Annual Rate (Fred: [PCNDGC96](http://research.stlouisfed.org/fred2/series/PCNDGC96) + [PCESVC96](http://research.stlouisfed.org/fred2/series/PCESVC96) and before 1999, BEA : [NIPA Table 2.3.3](http://www.bea.gov/iTable/iTable.cfm?ReqID=9&step=1#reqid=9&step=1&isuri=1))  
+    * EA : Real Private Consumption (AWM: PCR), up to 2010Q4, linked with Final consumption of households and NPISH's, Chain linked volumes, reference year 2005, Quarterly, Working day and seasonally adjusted, EA 17 fixed composition (BCE: [ESA.Q.I6.Y.1415.P31000.0000.TTTT.L.U.A](http://sdw.ecb.europa.eu/quickview.do?SERIES_KEY=119.ESA.Q.I6.Y.1415.P31000.0000.TTTT.L.U.A))   
+  * Investment  
+    * US : Real Personal Consumption Expenditures: Durable Goods + Real Gross Private Domestic Investment, Billions of Chained 2009 Dollars, Quarterly, Seasonally Adjusted Annual Rate (Fred: [PCDGCCA](http://research.stlouisfed.org/fred2/series/PCDGCCA) + [GPDIC1](http://research.stlouisfed.org/fred2/series/GPDIC1) and before 1999, BEA : [NIPA Table 2.3.3](http://www.bea.gov/iTable/iTable.cfm?ReqID=9&step=1#reqid=9&step=1&isuri=1))  
+    * EA :  Real Gross Investment (AWM : ITR), up to 2010Q4, linked with Gross fixed capital formation, Chain linked volumes, reference year 2005, Quarterly, Working day and seasonally adjusted, EA 17 fixed composition (BCE: [ESA.Q.I6.Y.1415.P31000.0000.TTTT.L.U.A](http://sdw.ecb.europa.eu/quickview.do?SERIES_KEY=119.ESA.Q.I6.Y.1000.P51000.0000.TTTT.L.U.A))  
+  * Inflation  
+    * US : GDP Implicit Price Deflator, Index 2009=100, Quarterly, Seasonally Adjusted (Fred: [GDPDEF](http://research.stlouisfed.org/fred2/series/GDPDEF), logarithmic first difference)  
+    * EA : Deflator of Gross Domestic Product (AWM: YED), up to 2010Q4, linked with Deflator of Gross domestic product at market price, Quarterly, Working day and seasonally adjusted, EA 17 fixed composition (BCE: [ESA.Q.I6.Y.0000.B1QG00.1000.TTTT.L.U.A](http://sdw.ecb.europa.eu/quickview.do?SERIES_KEY=119.ESA.Q.I6.Y.0000.B1QG00.1000.TTTT.D.U.I), logarithmic first difference)   
+  * Price of investment  
+    * US : Gross Private Domestic Investment Implicit Price Deflator, Index 2009=100, Quarterly, Seasonally Adjusted (Fred: [A006RD3Q086SBEA](http://research.stlouisfed.org/fred2/series/A006RD3Q086SBEA), divided by GDP Implicit Price Deflator  
+    * EA : Deflator of Gross Investment (AWM: ITD), up to 2010Q4, linked with Deflator of Gross fixed capital formation, Quarterly, Working day and seasonally adjusted, EA 17 fixed composition (BCE: [ESA.Q.I6.Y.1000.P51000.0000.TTTT.D.U.I](http://sdw.ecb.europa.eu/quickview.do?SERIES_KEY=119.ESA.Q.I6.Y.1000.P51000.0000.TTTT.D.U.I)), divided by GDP Deflator  
+  * Hours worked  
+    * US : Nonfarm Business Sector: Hours of All Persons, Index 2009=100, Quarterly, Seasonally Adjusted (Fred: [HOANBS](http://research.stlouisfed.org/fred2/series/HOANBS))  
+    * EA : Hours of All Employees, Quarterly, Working day and seasonally adjusted, EA 17 fixed composition (BCE: [ESA.Q.I6.Y.1000.EMPLOY.0000.TTTT.N.H.A](http://sdw.ecb.europa.eu/quickview.do?SERIES_KEY=119.ESA.Q.I6.Y.1000.EMPLOY.0000.TTTT.N.H.A)), from 2000Q1. Before, linked with Hours worked by Total Employment, Annually, EA 12 fixed composition (The Conference Board: [Total Economy Database](http://www.conference-board.org/data/economydatabase/)), converted to quarterly data by the weight of Total Employment, Quarterly, Working day and seasonally adjusted, EA 17 fixed composition (BCE: [ESA.Q.I6.Y.1000.TOTEMP.0000.TTTT.N.P.A](http://sdw.ecb.europa.eu/quickview.do?SERIES_KEY=119.ESA.Q.I6.Y.1000.TOTEMP.0000.TTTT.N.P.A))   
+  * Wage  
+    * US : Nonfarm Business Sector: Compensation Per Hour, Index 2009=100, Quarterly, Seasonally Adjusted (Fred: [COMPNFB](http://research.stlouisfed.org/fred2/series/COMPNFB)), divided by GDP Implicit Price Deflator  
+    * EA : Nominal Compensation to Employees (AWM: WIN), up to 2010Q4, linked with Compensation of Employees, received by Households and NPISH's, Quarterly, Seasonally adjusted, EA 17 fixed composition (Eurostat: [Quarterly sector accounts](http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=nasq_nf_tr&lang=en)), divided by Hours worked and by GDP Deflator  
+  * Short-term risk-free rates  
+    * US : Effective Federal Funds Rate, Percent, Quarterly, Not Seasonally Adjusted (Fred: [DFF](http://research.stlouisfed.org/fred2/series/DFF))   
+    * EA : Nominal Short-Term Interest Rate (AWM: STN), up to 2010Q4, then Euribor 3-month, Historical close, Quarterly, average observation through period, Euro area changing composition (BCE: [FM.Q.U2.EUR.RT.MM.EURIBOR3MD_.HSTA](http://sdw.ecb.europa.eu/quickview.do?SERIES_KEY=143.FM.Q.U2.EUR.RT.MM.EURIBOR3MD_.HSTA))  
+  * Credit  
+    * US : Nonfinancial Noncorporate Business; Credit Market Instruments; Liability + Nonfinancial Corporate Business; Credit Market Instruments; Liability, Level, Billions of Dollars, Quarterly, Not Seasonally Adjusted (Fred: [NNBTCMDODNS](http://research.stlouisfed.org/fred2/series/NNBTCMDODNS) + [TCMILBSNNCB](http://research.stlouisfed.org/fred2/series/TCMILBSNNCB)), divided by GDP Implicit Price Deflator  
+    * EA : Loans to Non-MFIs excluding general government sector, Outstanding amounts at the end of the period (stocks), Monthly, Neither seasonally nor working day adjusted, Euro area changing composition (BCE: [BSI.M.U2.N.U.A20.A.1.U2.2200.Z01.E](http://sdw.ecb.europa.eu/quickview.do?SERIES_KEY=117.BSI.M.U2.N.U.A20.A.1.U2.2200.Z01.E)), divided by GDP Deflator  
+  * Credit spread  
+    * US : Moody's Seasoned Baa Corporate Bond Yield, Percent, Quarterly, Not Seasonally Adjusted (Fred: [BAA](http://research.stlouisfed.org/fred2/series/BAA))  
+    * EA :  
+  * Slope of the term structure  
+    * US : Long-Term Government Bond Yields: 10-year: Main (Including Benchmark) for the United States, Percent, Quarterly, Not Seasonally Adjusted (Fred: [IRLTLT01USM156N](http://research.stlouisfed.org/fred2/series/IRLTLT01USM156N)), less Effective Federal Funds Rate  
+    * EA : Long-term Interest Rate (AWM: LTN), up to 2010Q4, then Long-term government bond yields (in most cases 10 years), Quarterly, average observation through period, Euro area 18 (OECD: [StatExtracts](http://stats.oecd.org/) General Statistics, Key Short-Term Economic Indicators), less Short-term Interest Rate  
+  * Entrepreneurial networth  
+    * US : Wilshire 5000 Total Market Index, Quarterly, Not Seasonally Adjusted (Fred: [WILL5000IND](http://research.stlouisfed.org/fred2/series/WILL5000IND)), divided by GDP Implicit Price Deflator  
+    * EA : Dow Jones Euro Stoxx Price Index, Historical close, Quarterly, average observation through period, Euro area changing composition (BCE: [FM.Q.U2.EUR.DS.EI.DJEURST.HSTA](http://sdw.ecb.europa.eu/quickview.do?SERIES_KEY=143.FM.Q.U2.EUR.DS.EI.DJEURST.HSTA)), divided by GDP Deflator   
+  * Population  
+    * US : Working Age Population: Aged 15-64: All Persons for the United States, Persons, Quarterly, Seasonally Adjusted (Fred: [LFWA64TTUSM647S](http://research.stlouisfed.org/fred2/series/LFWA64TTUSM647S))  
+    * EA : Working Age Population: Aged 15-64: All Persons for the Euro Area, Persons, Quarterly, Seasonally Adjusted (Fred: [LFWA64TTEZQ647S](http://research.stlouisfed.org/fred2/series/LFWA64TTEZQ647S), from OECD: Main Economic Indicators, Labour Force Survey), from 2005Q1. Before, linked with Total Population from 15 to 64 years on 1 January, converted to quarterly data by interpolation (Eurostat: [Population](http://appsso.eurostat.ec.europa.eu/nui/show.do?dataset=demo_pjanbroad&lang=en))

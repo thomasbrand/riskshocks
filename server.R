@@ -214,6 +214,8 @@ shinyServer(function(input, output,session) {
     return(input$tsp)
   })
   outputOptions(output, 'activeTab', suspendWhenHidden=F)
+  
+  output$datadesc<-renderUI({includeRmd('essai.Rmd')})
 
 })
 
