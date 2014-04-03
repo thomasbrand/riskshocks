@@ -4,7 +4,10 @@ library(ggplot2)
 
 shinyServer(function(input, output,session) {
   
-  dataL <- reactive({subset(dataLevel,variable == input$ObsMotiv1  & time>=input$TimeMotiv[1] & time<=input$TimeMotiv[2])})
+  dataL <- reactive({
+    subdata <- subset(dataLevel,variable == input$ObsMotiv1  & time>=input$TimeMotiv[1] & time<=input$TimeMotiv[2])
+    subdataIndex <- ddply(subdata,.(country,variable),transform,index=value/value[1]*100)
+    })
   dataR <- reactive({
     if (input$withoutmean){
       if (input$rawdataCMR){
@@ -17,7 +20,10 @@ shinyServer(function(input, output,session) {
     }
   })
   
-  dataSL <- reactive({subset(dataSimLev,variable == input$ObsRes & shock %in% c(input$ShockRes,'sum of shocks') & time>=input$TimeRes[1] & time<=input$TimeRes[2])})
+  dataSL <- reactive({
+    subdata <- subset(dataSimLev,variable == input$ObsRes & shock %in% c(input$ShockRes,'sum of shocks') & time>=input$TimeRes[1] & time<=input$TimeRes[2])
+    subdataIndex <- ddply(subdata,.(country,variable,shock),transform,index=value/value[1]*100)
+    })
   
   dataF <- reactive({
     rbind(subset(dataDecompo,shock == input$ShockFacet & country == input$CountryFacet),
@@ -90,12 +96,12 @@ shinyServer(function(input, output,session) {
     }
   })
   
-  output$cumuLineMotiv <- renderChart({
-    n <- nPlot(value ~ time, data=dataL(), type = "cumulativeLineChart",group="country")
+  output$indexLineMotiv <- renderChart({
+    n <- nPlot(index ~ time, data=dataL(), type = "lineChart",group="country")
     n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=FALSE)
-    n$yAxis(tickFormat ="#!function (d) {return d3.format('.2f')(d);}!#",showMaxMin = FALSE)
-    n$chart(showControls=TRUE,useInteractiveGuideline=TRUE)
-    n$set(dom = 'cumuLineMotiv', width = 700,height=380)
+    n$yAxis(tickFormat ="#!function (d) {return d3.format('.1f')(d);}!#",showMaxMin = FALSE)
+    n$chart(useInteractiveGuideline=TRUE)
+    n$set(dom = 'indexLineMotiv', width = 700,height=380)
     n
   })
   
@@ -108,12 +114,12 @@ shinyServer(function(input, output,session) {
     n
   })
   
-  output$cumuLineRes <- renderChart({
-    n <- nPlot(value ~ time, data=dataSL(), type = "cumulativeLineChart",group="new")
+  output$indexLineRes <- renderChart({
+    n <- nPlot(index ~ time, data=dataSL(), type = "lineChart",group="new")
     n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=FALSE)
-    n$yAxis(tickFormat ="#!function (d) {return d3.format('.2f')(d);}!#",showMaxMin = FALSE)
-    n$chart(showControls=FALSE,useInteractiveGuideline=TRUE)
-    n$set(dom = 'cumuLineRes', width = 700,height=380)
+    n$yAxis(tickFormat ="#!function (d) {return d3.format('.1f')(d);}!#",showMaxMin = FALSE)
+    n$chart(useInteractiveGuideline=TRUE)
+    n$set(dom = 'indexLineRes', width = 700,height=380)
     n
   })
   

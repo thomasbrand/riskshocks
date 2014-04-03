@@ -1,9 +1,10 @@
 library(shiny)
 
-pkgs <- c("markdown","devtools","ggplot2")
+pkgs <- c("markdown","devtools","ggplot2","knitr")
 pkgs <- pkgs[!(pkgs %in% installed.packages()[,"Package"])]
 if(length(pkgs)) install.packages(pkgs,repos="http://cran.cs.wwu.edu/")
 
+library(knitr)
 library(markdown)
 library(devtools)
 library(ggplot2)
