@@ -174,7 +174,8 @@ shinyUI(pageWithSidebar(
                h4('Sources for the 12 variables used in estimation (plus the population)',align='center'),
                uiOutput("datadesc"),
                value="data"),
-      id="tsp"
+      id="tsp",
+      type='pills'
     ),
     tagList(
       tags$head(
