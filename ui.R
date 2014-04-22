@@ -24,7 +24,7 @@ shinyUI(pageWithSidebar(
       p("* What would US policies have produced in EA ?"),
       p("We update the CMR database, compile EA database and estimate the model for both countries."),
       tags$hr(),
-      dateRangeInput('TimeMotiv','Date range:',start="2007-12-01",end="2013-06-01",min="1988-03-01",max="2013-06-01"),
+      dateRangeInput('TimeMotiv','Date range:',start="2007-12-01",end="2013-12-01",min="1988-03-01",max="2013-12-01"),
       selectInput('ObsMotiv1',
                   'Plot the index of selected variable :',
                   levels(dataLevel$variable)),
@@ -48,7 +48,7 @@ shinyUI(pageWithSidebar(
       p('* Risk shocks contributed less to the contraction in EA than in the US, but they are at the origin of the double dip pattern of the crisis.'),
       p('* Differences in fiscal and conventional monetary policies explain a part of the divergence during the contraction, but play no role in the recent divergence.'),
       tags$hr(),
-      dateRangeInput('TimeRes','Date range:',start="2007-12-01",end="2013-06-01",min="1988-03-01",max="2013-06-01"),
+      dateRangeInput('TimeRes','Date range:',start="2007-12-01",end="2013-06-01",min="1988-03-01",max="2013-12-01"),
       selectInput('ObsRes',
                   'Observed variable: ',
                   levels(dataLevel$variable)),
@@ -72,6 +72,16 @@ shinyUI(pageWithSidebar(
                   selected='risk'),
       tags$hr(),
       downloadButton("downloadGraphRes", "Download Graphic as pdf")
+    ),
+
+    conditionalPanel(
+      condition="input.tsp=='forecast'",
+      p('blabla'),
+      selectInput('CountryForecast',
+                  "Country: ",
+                  c("Euro Area",'United States')),
+      tags$hr(),
+      downloadButton("downloadGraphForecast", "Download Graphic as pdf")
     ),
     
     conditionalPanel(
@@ -127,10 +137,11 @@ shinyUI(pageWithSidebar(
     
     conditionalPanel(
       condition="input.tsp=='data'",
-      p("We use quarterly observation on 12 variables covering the period 1987Q1-2013Q2. These include 8 variables that are standard in bayesian estimation of DSGE models: GDP, consumption, investment, inflation, wage, price of investment, hours worked and short-term risk-free rate."),
-      p("As CMR, we also use four financial variables: credit, slope of the term structure of interest rates, entrepreneurial networth and credit spread."),
+      p("We use quarterly observations on 12 variables covering the period 1987Q1-2013Q2. These include 8 variables that are standard in bayesian estimation of DSGE models: GDP, consumption, investment, inflation, wage, price of investment, hours worked and short-term risk-free rate."),
       p("For Euro case, we use the Area-wide Model (AWM) database, up to 2010Q4. We then link, where it is feasible, the data contained in the orginal AWM database to the official euro area data.",
-        helpPopup("AWM Database","The original version is the ECB working paper No. 42: ‘An Area-wide Model (AWM) for the euro area’ by Gabriel Fagan, Jérôme Henry and Ricardo Mestre (January 2001). Here we use the 11th update of the AWM database. It has been constructed using both euro area data reported in the ECB Monthly Bulletin and other ECB and Eurostat data where available."))
+        helpPopup("AWM Database","The original version of the databas is the ECB working paper No. 42: ‘An Area-wide Model (AWM) for the euro area’ by Gabriel Fagan, Jérôme Henry and Ricardo Mestre (January 2001). Here we use the 11th update of the AWM database. It has been constructed using both euro area data reported in the ECB Monthly Bulletin and other ECB and Eurostat data where available.")),
+      p("As CMR, we also use four financial variables: credit, slope of the term structure of interest rates, entrepreneurial networth and credit spread."),
+      p("Population series are used to normalize quantity variables.")
     ),
     
     tags$hr(),
@@ -156,6 +167,10 @@ shinyUI(pageWithSidebar(
                h4("The Role of the Selected Shock in Observed Variables",align="center"),
                div(plotOutput("facetLineR",height="700px",width="760px"),align="center"),
                value="facet"),
+      tabPanel("Forecast",
+               h4("The Forecast of Observed Variables",align="center"),
+               div(plotOutput("facetLineF",height="700px",width="760px"),align="center"),
+               value="forecast"),
       tabPanel("Shock Decomposition",
                h4("The Decomposition of Shocks in",textOutput("captionD1"),align="center"),
                showOutput("multibar","nvd3"),
@@ -171,7 +186,7 @@ shinyUI(pageWithSidebar(
                div(plotOutput("facetLineC",height="700px",width="760px"),align="center"),
                value="counterfact"),
       tabPanel("Data",
-               h4('Sources for the 12 variables used in estimation (plus the population)',align='center'),
+               h4('Sources for the 12 variables used in estimation (and the population)',align='center'),
                uiOutput("datadesc"),
                value="data"),
       id="tsp",

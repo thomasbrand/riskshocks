@@ -31,6 +31,8 @@ shinyServer(function(input, output,session) {
     )
   })
   
+  dataFore <- reactive({subset(dataForecast,country == input$CountryForecast)})
+  
   dataD <- reactive({subset(dataDecompo,variable == input$ObsDecompo & country == input$CountryDecompo)})
   dataS <- reactive({subset(dataSum, variable == input$ObsDecompo & country == input$CountryDecompo)})
   dataDS <- reactive({rbind(dataD(),
@@ -124,10 +126,13 @@ shinyServer(function(input, output,session) {
   })
   
   doPlotR <- function(text_size=11){
-    p <- ggplot(data=dataF(),aes(x=time,y=value,color=shock,group=shock))+
-      geom_line(size=0.8)+scale_color_manual(values=c('#1F77B4','#B6CCEA'))+
+    p <- ggplot(data=dataF(),aes(x=time,y=value,group=shock,color=shock))+
+      geom_line(size=0.8)+geom_point(aes(shape=shock),size=2)+
+      scale_color_manual(values=c('#1F77B4','#B6CCEA'))+
+      scale_shape_manual(values=c(4,NA)) +
       facet_wrap(~variable,nrow=4,scales="free_y")+
       xlab(NULL) + ylab(NULL)+theme_bw()+
+      guides(col=guide_legend(reverse=T),shape=guide_legend(reverse=T))+
       theme(strip.background=element_blank(),
             strip.text=element_text(size=text_size),
             legend.key=element_rect(colour="white"),
@@ -140,6 +145,26 @@ shinyServer(function(input, output,session) {
   
   output$facetLineR <- renderPlot({
     doPlotR()  
+  })
+  
+  doPlotF <- function(text_size=11){
+    p <- ggplot(data=dataFore(),aes(x=time,y=mean))+
+      geom_line(size=0.8)+ #scale_color_manual(values=c('#1F77B4','#B6CCEA'))+
+      geom_ribbon(aes(ymin=inf,ymax=sup),alpha=0.2) +
+      facet_wrap(~obs,nrow=4,scales="free_y")+
+      xlab(NULL) + ylab(NULL)+theme_bw()+
+      theme(strip.background=element_blank(),
+            strip.text=element_text(size=text_size),
+            legend.key=element_rect(colour="white"),
+            legend.position="bottom",
+            legend.title=element_blank(),
+            legend.text=element_text(size=text_size),
+            axis.text=element_text(size=text_size))
+    print(p)
+  }
+  
+  output$facetLineF <- renderPlot({
+    doPlotF()  
   })
   
   doPlotC <- function(text_size=11){
@@ -194,6 +219,13 @@ shinyServer(function(input, output,session) {
   output$downloadDataRes <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(dataSimLev, file)})
   output$downloadDataDecompo <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(dataDecompo,dataSum), file)})
   output$downloadDataTable <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(dataTable, file)})
+  
+  output$downloadGraphForecast <- downloadHandler(filename = 'plot.pdf',
+                                             content = function(file){
+                                               pdf(file = file)
+                                               doPlotF(text_size=7)
+                                               dev.off()
+                                             })
   
   output$downloadGraphRes <- downloadHandler(filename = 'plot.pdf',
                                                 content = function(file){
