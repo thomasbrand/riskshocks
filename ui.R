@@ -3,8 +3,8 @@ library(rCharts)
 
 shinyUI(pageWithSidebar(
   
-  div(h2("Great Divergence and Risk Shocks",align="center"),
-      h4("An Analysis of Exit Strategies in Euro Area and the United States",align="center"),
+  div(h2("Risk shocks and divergence between US and Euro Area economies",align="center"),
+      #h4("An Analysis of Exit Strategies in Euro Area and the United States",align="center"),
       div(a("Thomas Brand",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Thomas%20Brand"),
       "and",a("Fabien Tripier",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Fabien%20Tripier"),align="center"),
       br()
@@ -76,12 +76,26 @@ shinyUI(pageWithSidebar(
 
     conditionalPanel(
       condition="input.tsp=='forecast'",
-      p('blabla'),
+      #p('blabla'),
       selectInput('CountryForecast',
                   "Country: ",
                   c("Euro Area",'United States')),
       tags$hr(),
       downloadButton("downloadGraphForecast", "Download Graphic as pdf")
+    ),
+    
+    conditionalPanel(
+      condition="input.tsp=='birf'",
+      #p('blabla'),
+      selectInput('CountryB',
+                  "Country: ",
+                  c("Euro Area",'United States')),
+      selectInput('ShockB',
+                  'Shock: ',
+                  levels(dataBirf$shock),
+                  selected="risk"),
+      tags$hr(),
+      downloadButton("downloadGraphB", "Download Graphic as pdf")
     ),
     
     conditionalPanel(
@@ -167,10 +181,6 @@ shinyUI(pageWithSidebar(
                h4("The Role of the Selected Shock in Observed Variables",align="center"),
                div(plotOutput("facetLineR",height="700px",width="760px"),align="center"),
                value="facet"),
-      tabPanel("Forecast",
-               h4("The Forecast of Observed Variables",align="center"),
-               div(plotOutput("facetLineF",height="700px",width="760px"),align="center"),
-               value="forecast"),
       tabPanel("Shock Decomposition",
                h4("The Decomposition of Shocks in",textOutput("captionD1"),align="center"),
                showOutput("multibar","nvd3"),
@@ -181,6 +191,14 @@ shinyUI(pageWithSidebar(
       tabPanel("Priors & Posteriors",
                dataTableOutput("table"),
                value="table"),
+      tabPanel("Bayesian IRF",
+               h4("Bayesian Impulse Response Function after a Shock of",textOutput("captionB"),align="center"),
+               div(plotOutput("facetLineB",height="700px",width="760px"),align="center"),
+               value="birf"),
+      tabPanel("Forecast",
+               h4("The Forecast of Observed Variables",align="center"),
+               div(plotOutput("facetLineF",height="700px",width="760px"),align="center"),
+               value="forecast"),
       tabPanel("Counterfactual",
                h4(textOutput("captionC"),align="center"),
                div(plotOutput("facetLineC",height="700px",width="760px"),align="center"),

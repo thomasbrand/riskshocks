@@ -33,6 +33,8 @@ shinyServer(function(input, output,session) {
   
   dataFore <- reactive({subset(dataForecast,country == input$CountryForecast)})
   
+  dataB <- reactive({subset(dataBirf,shock == input$ShockB & country == input$CountryB)})
+  
   dataD <- reactive({subset(dataDecompo,variable == input$ObsDecompo & country == input$CountryDecompo)})
   dataS <- reactive({subset(dataSum, variable == input$ObsDecompo & country == input$CountryDecompo)})
   dataDS <- reactive({rbind(dataD(),
@@ -74,6 +76,9 @@ shinyServer(function(input, output,session) {
   })
   output$captionF<-renderText({
     input$ShockFacet
+  })
+  output$captionB<-renderText({
+    input$ShockB
   })
   output$captionD1<-renderText({
     input$ObsDecompo
@@ -125,7 +130,7 @@ shinyServer(function(input, output,session) {
     n
   })
   
-  doPlotR <- function(text_size=11){
+  doPlotR <- function(text_size=10){
     p <- ggplot(data=dataF(),aes(x=time,y=value,group=shock,color=shock))+
       geom_line(size=0.8)+geom_point(aes(shape=shock),size=2)+
       scale_color_manual(values=c('#1F77B4','#B6CCEA'))+
@@ -147,10 +152,32 @@ shinyServer(function(input, output,session) {
     doPlotR()  
   })
   
-  doPlotF <- function(text_size=11){
+  doPlotB <- function(text_size=10){
+    p <- ggplot(data=dataB(),aes(x=time,y=mean,group=shock))+
+      geom_line(size=0.8,colour="#1F77B4")+
+      geom_ribbon(aes(ymin=inf,ymax=sup),alpha=0.6,fill="#D6E3F3")+
+      facet_wrap(~variable,nrow=4,scales="free_y")+
+      scale_x_discrete(breaks=c(10,20,30,40),expand=c(0.01,0.01))+
+      xlab(NULL) + ylab(NULL)+theme_bw()+
+      theme(strip.background=element_blank(),
+            strip.text=element_text(size=text_size),
+            legend.key=element_rect(colour="white"),
+            legend.position="bottom",
+            legend.title=element_blank(),
+            legend.text=element_text(size=text_size),
+            axis.text=element_text(size=text_size))
+    print(p)
+  }
+  
+  output$facetLineB <- renderPlot({
+    doPlotB()  
+  })
+  
+  doPlotF <- function(text_size=10){
     p <- ggplot(data=dataFore(),aes(x=time,y=mean))+
-      geom_line(size=0.8)+ #scale_color_manual(values=c('#1F77B4','#B6CCEA'))+
-      geom_ribbon(aes(ymin=inf,ymax=sup),alpha=0.2) +
+      geom_line(size=0.8,colour="#1F77B4")+ 
+      geom_ribbon(aes(ymin=inf,ymax=sup),alpha=0.6,fill="#D6E3F3") +
+      scale_x_date(expand=c(0.01,0.01))+
       facet_wrap(~obs,nrow=4,scales="free_y")+
       xlab(NULL) + ylab(NULL)+theme_bw()+
       theme(strip.background=element_blank(),
@@ -167,7 +194,7 @@ shinyServer(function(input, output,session) {
     doPlotF()  
   })
   
-  doPlotC <- function(text_size=11){
+  doPlotC <- function(text_size=10){
     if (input$VarCount=="struc"){
       p<-ggplot(data=dataC(),aes(x=time,y=value,color=country_shock,group=country_shock))+
         geom_line(size=0.8)+facet_wrap(~variable,nrow=4,scales="free_y")+scale_color_manual(values=c('#1F77B4','#B6CCEA'))
@@ -176,6 +203,7 @@ shinyServer(function(input, output,session) {
         geom_line(size=0.8)+facet_wrap(~variable,nrow=4,scales="free_y")+scale_color_manual(values=c('#1F77B4','#B6CCEA'))
     }
     p <- p + xlab(NULL) + ylab(NULL)+theme_bw()+
+      scale_x_date(expand=c(0.01,0.01))+
       theme(strip.background=element_blank(),
             strip.text=element_text(size=text_size),
             legend.key=element_rect(colour="white"),
@@ -234,6 +262,13 @@ shinyServer(function(input, output,session) {
                                                   dev.off()
                                                 })
 
+  output$downloadGraphB <- downloadHandler(filename = 'plot.pdf',
+                                             content = function(file){
+                                               pdf(file = file)
+                                               doPlotB(text_size=7)
+                                               dev.off()
+                                             })
+  
   output$downloadGraphC <- downloadHandler(filename = 'plot.pdf',
                                              content = function(file){
                                                pdf(file = file)
