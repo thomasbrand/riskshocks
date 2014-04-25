@@ -3,9 +3,9 @@ library(rCharts)
 
 shinyUI(pageWithSidebar(
   
-  div(h2("Risk shocks and divergence between US and Euro Area economies",align="center"),
-      #h4("An Analysis of Exit Strategies in Euro Area and the United States",align="center"),
-      div(a("Thomas Brand",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Thomas%20Brand"),
+  div(h3("Risk shocks and divergence between the Euro Area and the US",align="center",
+         a(img(src="http://www.cepii.fr/CEPII/css/img/header/logo_header_en.png", width="180", height="64",align="right"),href="http://www.cepii.fr")),
+      h4(a("Thomas Brand",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Thomas%20Brand"),
       "and",a("Fabien Tripier",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Fabien%20Tripier"),align="center"),
       br()
       ),
@@ -20,8 +20,8 @@ shinyUI(pageWithSidebar(
         helpPopup('Definition of risk','In a model à la Bernanke, Gertler and Gilchrist (1999), entrepreneurs combine their own resources with loans to acquire raw capital. They then convert raw capital into effective capital in a process characterized by idiosyncratic uncertainty. CMR (2014) refer to the magnitude of this uncertainty as risk.')),
       p("Based on their model, we address three more questions: "),
       p("* Is the decline of risk shocks essential to explain recovery ?"),
-      p("* Is it the same phenomenon in EA ?"),
-      p("* What would US policies have produced in EA ?"),
+      p("* Is it the same phenomenon in the EA ?"),
+      p("* What are the specific role of EA structures and policies in explaining those results ?"),
       p("We update the CMR database, compile EA database and estimate the model for both countries."),
       tags$hr(),
       dateRangeInput('TimeMotiv','Date range:',start="2007-12-01",end="2013-12-01",min="1988-03-01",max="2013-12-01"),
@@ -45,7 +45,7 @@ shinyUI(pageWithSidebar(
       condition="input.tsp=='result'",
       p("There are three main results: "),
       p('* The reversal of risk shocks drives the US recovery and is the key determinant of recent economic growth.'),
-      p('* Risk shocks contributed less to the contraction in EA than in the US, but they are at the origin of the double dip pattern of the crisis.'),
+      p('* Risk shocks contributed less to the contraction in the EA than in the US, but they are at the origin of the double dip pattern of the crisis.'),
       p('* Differences in fiscal and conventional monetary policies explain a part of the divergence during the contraction, but play no role in the recent divergence.'),
       tags$hr(),
       dateRangeInput('TimeRes','Date range:',start="2007-12-01",end="2013-06-01",min="1988-03-01",max="2013-12-01"),
@@ -100,7 +100,7 @@ shinyUI(pageWithSidebar(
     
     conditionalPanel(
       condition="input.tsp=='decompo'",
-      p("Now you can have a look at the decomposition and the role of the 12 shocks in the variation of the 12 observed variables for Euro Area and the United States."),
+      p("Now you can have a look at the decomposition and the role of the 12 shocks in the variation of the 12 observed variables for the Euro Area and the United States."),
       selectInput('CountryDecompo',
                   'Country: ',
                   c("Euro Area",'United States')),
@@ -125,7 +125,7 @@ shinyUI(pageWithSidebar(
 
     conditionalPanel(
       condition="input.tsp=='counterfact'",
-      p("Assessing the role of shocks, policies and structures: what would have happened if US fiscal and monetary policies were implemented in EA ?"),
+      p("Assessing the role of shocks, policies and structures."),
       radioButtons("VarCount",
                    "You want to see:",
                    list("one country economic structure hit by all shocks from different countries"="struc",
@@ -151,7 +151,7 @@ shinyUI(pageWithSidebar(
     
     conditionalPanel(
       condition="input.tsp=='data'",
-      p("We use quarterly observations on 12 variables covering the period 1987Q1-2013Q2. These include 8 variables that are standard in bayesian estimation of DSGE models: GDP, consumption, investment, inflation, wage, price of investment, hours worked and short-term risk-free rate."),
+      p("We use quarterly observations on 12 variables covering the period 1987Q1-2013Q4. These include 8 variables that are standard in bayesian estimation of DSGE models: GDP, consumption, investment, inflation, wage, price of investment, hours worked and short-term risk-free rate."),
       p("For Euro case, we use the Area-wide Model (AWM) database, up to 2010Q4. We then link, where it is feasible, the data contained in the orginal AWM database to the official euro area data.",
         helpPopup("AWM Database","The original version of the databas is the ECB working paper No. 42: ‘An Area-wide Model (AWM) for the euro area’ by Gabriel Fagan, Jérôme Henry and Ricardo Mestre (January 2001). Here we use the 11th update of the AWM database. It has been constructed using both euro area data reported in the ECB Monthly Bulletin and other ECB and Eurostat data where available.")),
       p("As CMR, we also use four financial variables: credit, slope of the term structure of interest rates, entrepreneurial networth and credit spread."),
@@ -159,8 +159,8 @@ shinyUI(pageWithSidebar(
     ),
     
     tags$hr(),
-    p("Source code available at",a("GitHub",href="https://github.com/thomasbrand/riskshocks"),textOutput("pageviews")),
-    a(img(src="http://www.cepii.fr/CEPII/css/img/header/logo_header_en.png", width="180", height="64"),href="http://www.cepii.fr")
+    p("Source code available at",a("GitHub",href="https://github.com/thomasbrand/riskshocks"),textOutput("pageviews"))
+    #a(img(src="http://www.cepii.fr/CEPII/css/img/header/logo_header_en.png", width="180", height="64"),href="http://www.cepii.fr")
   ),
   
   

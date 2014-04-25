@@ -90,9 +90,9 @@ shinyServer(function(input, output,session) {
   output$captionC <- renderText({
     if (input$VarCount=="struc"){
       if (input$Country_model=="Euro Area"){
-        "EA specific economic structure hit by all shocks from EA and from US"
+        "EA specific economic structure hit by all shocks from the EA and from the US"
       } else{
-        "US specific economic structure hit by all shocks from EA and from US"
+        "US specific economic structure hit by all shocks from the EA and from the US"
       }
     } else{
     if (input$Country_shock=="Euro Area"){
@@ -240,8 +240,11 @@ shinyServer(function(input, output,session) {
   output$table <- renderDataTable({
     dataTable[,-c(1,2)]<-round(dataTable[,-c(1,2)],8)
     subset(dataTable,select=c("names",input$varTable))
-  },options=list(iDisplayLength=20,aLengthMenu=list(c(10,20,50),c(10,20,"All"))))
+  },options=list(bPaginate=FALSE,bLengthChange=FALSE))
 
+  #iDisplayLength=20
+  #,aLengthMenu=list(c(10,20,50),c(10,20,"All"))
+  
   dataLevel["shock"]<-"index"
   output$downloadDataRaw <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(dataRaw,dataLevel), file)})
   output$downloadDataRes <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(dataSimLev, file)})
