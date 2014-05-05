@@ -1,15 +1,37 @@
 div.busy {
 position:absolute;
-top: 40%;
-left: 50%;
-margin-top: -100px;
-margin-left: -50px;
-display:none;
-background: rgba(230, 230, 230, .8);
+left: 52%;
+top:40%;
 text-align: center;
-padding-top: 20px;
-padding-left: 30px;
-padding-bottom: 40px;
-padding-right: 30px;
+display:none;
+margin-top: -100px;
+margin-left: 0px;
+width:20%;
+background: rgba(230, 230, 230, .8);
+color:#000000;
+font-size :20px;
+font-weight:bold;
+letter-spacing:3px;
+
+padding: 20px;
 border-radius: 5px;
 }
+
+
+
+
+/*
+label, input, button, select, textarea {
+font-size: 12px;
+font-weight: normal;
+line-height: 20px;
+}
+
+.selectize-input {
+ font-size:12px;
+}
+
+.btn {
+ font-size:12px;
+}
+*/
