@@ -4,14 +4,14 @@ left: 52%;
 top:40%;
 text-align: center;
 display:none;
-margin-top: -100px;
+margin-top: 0px;
 margin-left: 0px;
 width:20%;
 background: rgba(230, 230, 230, .8);
 color:#000000;
 font-size :20px;
 font-weight:bold;
-letter-spacing:3px;
+letter-spacing:2px;
 
 padding: 20px;
 border-radius: 5px;
@@ -19,8 +19,6 @@ border-radius: 5px;
 
 
 
-
-/*
 label, input, button, select, textarea {
 font-size: 12px;
 font-weight: normal;
@@ -31,7 +29,15 @@ line-height: 20px;
  font-size:12px;
 }
 
+.selectize-dropdown {
+ font-size:12px;
+}
+
+.input-daterange {
+ font-size:12px;
+}
+
+
 .btn {
  font-size:12px;
 }
-*/

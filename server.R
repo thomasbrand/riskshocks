@@ -37,7 +37,7 @@ shinyServer(function(input, output,session) {
   dataSum <- reactive({subset(sum, variable == input$ObsDecompo & country == input$CountryDecompo)})
   dataDecompoSum <- reactive({rbind(dataDecompo(),
                                     dataSum(),
-                                    subset(motiv1,variable == input$ObsDecompo & country == input$CountryDecompo & shock == 'rawdata (without mean)')
+                                    subset(motiv2,variable == input$ObsDecompo & country == input$CountryDecompo & shock == 'rawdata (without mean)')
                             )
                       }
                      )

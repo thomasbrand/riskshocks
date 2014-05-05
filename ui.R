@@ -24,9 +24,9 @@ shinyUI(fluidPage(
   ),
   
   fluidRow(
-    h5(a("Download working paper (preliminary draft)",href=""),align="center",style="line-height:11px")),
+    h5(a("Download working paper (preliminary draft)",href="https://github.com/thomasbrand/riskshocks/blob/master/RiskDivergence20140505.pdf?raw=true"),align="center",style="line-height:11px")),
   
-  br(),
+  #br(),
 
   fluidRow(
     
@@ -72,7 +72,7 @@ shinyUI(fluidPage(
         "Role of Shocks",
         value="role",
         wellPanel(
-          p('Here we present the role of the selected shock in explaining fluctuations of the observed variables (annualized and without mean), for both countries.')
+          p('We compare raw data to simulated data, obtained when we feed only the selected shock to the model.')
         ),               
         h4("The Role of the Selected Shock in Observed Variables",align="center"),
         div(plotOutput("graphRole",height="700px",width="760px"),align="center")
@@ -81,9 +81,9 @@ shinyUI(fluidPage(
       tabPanel(
         "Shock Decomposition",
         value="decompo",
-        wellPanel(
-          p("Now you can have a look at the decomposition and the role of the 12 shocks in the variation of the 12 observed variables for the Euro Area and the United States.")
-        ),
+#         wellPanel(
+#           p("Now you can have a look at the decomposition and the role of the 12 shocks in the variation of the 12 observed variables for the Euro Area and the United States.")
+#         ),
         h4("The Decomposition of Shocks in",textOutput("captionDecompo1"),align="center"),
         showOutput("graphDecompo1","nvd3"),
         h4("The Role of Shocks in",textOutput("captionDecompo2"),align="center"),
@@ -100,9 +100,9 @@ shinyUI(fluidPage(
       tabPanel(
         "Counterfactual",
         value="counterfact",
-        wellPanel(
-          p("Assessing the role of shocks, policies and structures.")
-        ),
+#         wellPanel(
+#           p("Assessing the role of shocks, policies and structures.")
+#         ),
         h4(textOutput("captionCounterfact"),align="center"),
         div(plotOutput("graphCounterfact",height="700px",width="760px"),align="center")
       ),     
@@ -192,6 +192,8 @@ shinyUI(fluidPage(
       downloadButton('downloadDataDecompo', 'Download Data as csv')
     ),
     
+    
+    
     conditionalPanel(
       condition="input.tsp=='birf'",
       wellPanel(
@@ -210,7 +212,7 @@ shinyUI(fluidPage(
                      "struc"),
         conditionalPanel(
           condition="input.VarCounterfact=='struc'",
-          radioButtons("Country_model","Which economic structure you want to consider:",
+          radioButtons("Country_model","Which economic structure do you want to consider:",
                        c("Euro Area","United States")
           )
         ),
@@ -251,18 +253,18 @@ shinyUI(fluidPage(
     
     br(),
     p("Source code available at",a("GitHub",href="https://github.com/thomasbrand/riskshocks"),
-      textOutput("pageviews")
+      style="font-size:12px"
     )
     
   )
-  
+  #textOutput("pageviews"),
   ),
   
   tagList(
     tags$head(
       tags$link(rel="stylesheet", type="text/css",href="style.css"),
       tags$script(type="text/javascript", src = "busy.js"),
-      tags$title('Risk Shocks and Divergence between the Euro Area and the US - Thomas Brand and Fabien Tripier')
+      tags$title('Risk Shocks and Divergence between the Euro Area and the US - Thomas Brand and Fabien Tripier - CEPII')
     )
   ),
   
