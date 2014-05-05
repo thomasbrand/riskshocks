@@ -24,7 +24,7 @@ shinyUI(fluidPage(
   ),
   
   fluidRow(
-    h5(a("Download working paper (preliminary draft)",href="https://github.com/thomasbrand/riskshocks/blob/master/RiskDivergence20140505.pdf?raw=true"),align="center",style="line-height:11px")),
+    h5(a("Download working paper (preliminary draft)",href="https://github.com/thomasbrand/riskshocks/blob/master/RiskDivergence.pdf?raw=true"),align="center",style="line-height:11px")),
   
   #br(),
 
