@@ -89,6 +89,16 @@ shinyUI(fluidPage(
         h4("The Role of Shocks in",textOutput("captionDecompo2"),align="center"),
         showOutput("graphDecompo2","nvd3")
       ),
+
+      tabPanel(
+        "Variance Decomposition",
+        value="vardecompo",
+#         wellPanel(
+#           p("Prior mean and standard deviation are the same in both countries.")
+#         ),
+        h4("Variance decomposition at business cycle frequency (Percent)",align="center"),
+        dataTableOutput("tabVarDecompo")
+      ),
       
       tabPanel(
         "Bayesian IRF",
@@ -144,7 +154,7 @@ shinyUI(fluidPage(
     
     left="20px",
     width="22.5%",
-    top="420px",
+    top="440px",
     fixed=TRUE,
     draggable=TRUE,
     
@@ -157,7 +167,7 @@ shinyUI(fluidPage(
         checkboxInput('withoutmean','Demeaned variable (actually used in estimation)',FALSE),
         conditionalPanel(
           condition="input.withoutmean==true",
-          p("Maybe you want to compare to CMR rawdata (also annualized)?"),
+          p("Maybe you want to compare to CMR rawdata (also annualized)?",style="font-size:12px"),
           checkboxInput("rawdataCMR","Yes, it would be wonderful!",FALSE)
         )
       ),
@@ -192,7 +202,14 @@ shinyUI(fluidPage(
       downloadButton('downloadDataDecompo', 'Download Data as csv')
     ),
     
-    
+    conditionalPanel(
+      condition="input.tsp=='vardecompo'",
+      wellPanel(
+        selectInput('CountryVarDecompo','Country',c('Euro Area','United States')),
+        checkboxInput('longtable','You want to see the details of the variance decomposition ?',FALSE)
+        ),
+      downloadButton('downloadDataVarDecompo', 'Download Data as csv')
+    ),
     
     conditionalPanel(
       condition="input.tsp=='birf'",

@@ -42,6 +42,14 @@ shinyServer(function(input, output,session) {
                       }
                      )
   
+  dataVarDecompo <- reactive({
+    if (input$longtable){
+      subset(vardecompo,country==input$CountryVarDecompo)
+    } else{
+      subset(vardecompoShort, country==input$CountryVarDecompo)
+    }
+  })
+  
   dataBirf <- reactive({subset(birf,shock == input$ShockBirf & country == input$CountryBirf)})
   
   dataCounterfact <- reactive({
@@ -181,6 +189,8 @@ shinyServer(function(input, output,session) {
     n
   })
   
+  output$tabVarDecompo <- renderDataTable({dataVarDecompo()[,-1]},options=list(bPaginate=FALSE,bLengthChange=FALSE,bFilter=FALSE,bSort=0,bInfo=0))
+  
   doPlotBirf <- function(text_size=10){
     p <- ggplot(data=dataBirf(),aes(x=time,y=mean,group=shock))+
       geom_line(size=0.8,colour="#1F77B4")+
@@ -247,7 +257,7 @@ shinyServer(function(input, output,session) {
     doPlotForecast()  
   })
   
-  output$tabPosterior <- renderDataTable({dataPosterior()},options=list(bPaginate=FALSE,bLengthChange=FALSE))
+  output$tabPosterior <- renderDataTable({dataPosterior()},options=list(bPaginate=FALSE,bLengthChange=FALSE,bFilter=FALSE,bSort=0,bInfo=0))
 
   output$txtSource<-renderUI({includeRmd('essai.Rmd')})
   
@@ -265,6 +275,8 @@ shinyServer(function(input, output,session) {
                                                 })
 
   output$downloadDataDecompo <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(decompo,sum), file)})
+  
+  output$downloadDataVarDecompo <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(vardecompo), file)})
   
   output$downloadGraphBirf <- downloadHandler(filename = 'plot.pdf',
                                                content = function(file){
