@@ -10,21 +10,21 @@ shinyUI(fluidPage(
       ),
     column(
       width=2,offset=0,
-      a(img(src="http://www.cepii.fr/CEPII/css/img/header/logo_header_en.png",align="right",style="padding-top:15px"),href="http://www.cepii.fr")
+      a(img(src="http://www.cepii.fr/CEPII/css/img/header/logo_header_en.png",align="right",style="padding-top:15px"),href="http://www.cepii.fr",target="_blank")
       )
     ),
   
   fluidRow(
     column(
       width=12,
-      h3(a("Thomas Brand",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Thomas%20Brand"),"and",
-         a("Fabien Tripier",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Fabien%20Tripier"),
+      h3(a("Thomas Brand",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Thomas%20Brand",target="_blank"),"and",
+         a("Fabien Tripier",href="http://www.cepii.fr/CEPII/fr/page_perso/page_perso.asp?nom_complet=Fabien%20Tripier",target="_blank"),
          align="center",style="font-size:20px;line-height:10px")
     )
   ),
   
   fluidRow(
-    h5(a("Download working paper (preliminary draft)",href="https://github.com/thomasbrand/riskshocks/blob/master/RiskDivergence.pdf?raw=true"),align="center",style="line-height:11px")),
+    h5(a("Download working paper (preliminary draft)",href="https://github.com/thomasbrand/riskshocks/blob/master/RiskDivergence.pdf?raw=true",target="_blank"),align="center",style="line-height:11px")),
   
   #br(),
 
@@ -40,7 +40,7 @@ shinyUI(fluidPage(
         "Motivation",
         value="motiv",
         wellPanel(
-          p("Christiano, Motto and Rostagno (2014,", a("AER)",href="https://www.aeaweb.org/articles.php?doi=10.1257/aer.104.1.27"),
+          p("Christiano, Motto and Rostagno (2014,", a("AER)",href="https://www.aeaweb.org/articles.php?doi=10.1257/aer.104.1.27",target="_blank"),
             "show that risk shocks are essential to explain fluctuations of GDP in the US, especially during the Great Recession.",
             helpPopup('Definition of risk','In a model à la Bernanke, Gertler and Gilchrist (1999), entrepreneurs combine their own resources with loans to acquire raw capital. They then convert raw capital into effective capital in a process characterized by idiosyncratic uncertainty. CMR (2014) refer to the magnitude of this uncertainty as risk.')),
           p("Based on their model, we address three more questions: "),
@@ -177,7 +177,7 @@ shinyUI(fluidPage(
     conditionalPanel(
       condition="input.tsp=='result'",
       wellPanel(
-        dateRangeInput('TimeResult','Date range:',start="2007-12-01",end="2013-06-01",min="1988-03-01",max="2013-12-01"),
+        dateRangeInput('TimeResult','Date range:',start="2007-12-01",end="2013-12-01",min="1988-03-01",max="2013-12-01"),
         selectInput('ObsResult','Observed variable: ',levels(motiv1$variable)),
         selectInput('ShockResult','Shock: ',levels(decompo$shock)[-1],selected='risk')
       ),
@@ -217,7 +217,9 @@ shinyUI(fluidPage(
         selectInput('CountryBirf',"Country: ",c("Euro Area",'United States')),
         selectInput('ShockBirf','Shock: ',levels(birf$shock),selected="risk")
       ),
-      downloadButton("downloadGraphBirf", "Download Graphic as pdf")
+      downloadButton("downloadGraphBirf", "Download Graphic as pdf"),
+      br(),br(),
+      downloadButton('downloadDataBirf', 'Download Data as csv')
     ),
     
     conditionalPanel(
@@ -241,7 +243,9 @@ shinyUI(fluidPage(
           )
         )
       ),
-      downloadButton("downloadGraphCounterfact", "Download Graphic as pdf")
+      downloadButton("downloadGraphCounterfact", "Download Graphic as pdf"),
+      br(),br(),
+      downloadButton('downloadDataCounterfact', 'Download Data as csv')
     ),
     
     conditionalPanel(
@@ -249,7 +253,9 @@ shinyUI(fluidPage(
       wellPanel(
         selectInput('CountryForecast',"Country: ",c("Euro Area",'United States'))
       ),
-      downloadButton("downloadGraphForecast", "Download Graphic as pdf")
+      downloadButton("downloadGraphForecast", "Download Graphic as pdf"),
+      br(),br(),
+      downloadButton('downloadDataForecast', 'Download Data as csv')
     ),
     
     conditionalPanel(
@@ -269,7 +275,7 @@ shinyUI(fluidPage(
     ),
     
     br(),
-    p("Source code available at",a("GitHub",href="https://github.com/thomasbrand/riskshocks"),
+    p("Source code available at",a("GitHub",href="https://github.com/thomasbrand/riskshocks",target="_blank"),
       style="font-size:12px"
     )
     

@@ -153,6 +153,7 @@ shinyServer(function(input, output,session) {
       geom_line(size=0.8)+geom_point(aes(shape=shock),size=2)+
       scale_color_manual(values=c('#1F77B4','#B6CCEA'))+
       scale_shape_manual(values=c(4,NA)) +
+      scale_x_date(expand=c(0.01,0.01))+
       facet_wrap(~variable,nrow=4,scales="free_y")+
       xlab(NULL) + ylab(NULL)+theme_bw()+
       guides(col=guide_legend(reverse=T),shape=guide_legend(reverse=T))+
@@ -237,9 +238,11 @@ shinyServer(function(input, output,session) {
   })
   
   doPlotForecast <- function(text_size=10){
-    p <- ggplot(data=dataForecast(),aes(x=time,y=mean))+
+    p <- ggplot(data=dataForecast(),aes(x=time,y=int50))+
+      geom_ribbon(aes(ymin=int20,ymax=int80),alpha=0.2,fill="#D6E3F3") +
+      geom_ribbon(aes(ymin=int30,ymax=int70),alpha=0.5,fill="#D6E3F3") +
+      geom_ribbon(aes(ymin=int40,ymax=int60),alpha=0.9,fill="#D6E3F3") +
       geom_line(size=0.8,colour="#1F77B4")+ 
-      geom_ribbon(aes(ymin=inf,ymax=sup),alpha=0.6,fill="#D6E3F3") +
       scale_x_date(expand=c(0.01,0.01))+
       facet_wrap(~obs,nrow=4,scales="free_y")+
       xlab(NULL) + ylab(NULL)+theme_bw()+
@@ -285,6 +288,10 @@ shinyServer(function(input, output,session) {
                                                  dev.off()
                                                }
                                              )
+  
+  output$downloadDataBirf <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(birf,sum), file)})
+  output$downloadDataCounterfact <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(counterfact,sum), file)})
+  output$downloadDataForecast <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(forecast,sum), file)})
   
   output$downloadGraphCounterfact <- downloadHandler(filename = 'plot.pdf',
                                              content = function(file){
