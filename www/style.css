@@ -1,6 +1,6 @@
 div.busy {
 position:absolute;
-left: 52.5%;
+left: 52%;
 top:40%;
 text-align: center;
 display:none;
@@ -13,7 +13,7 @@ font-size :20px;
 font-weight:bold;
 letter-spacing:2px;
 
-padding: 10px;
+padding: 1%;
 border-radius: 5px;
 }
 

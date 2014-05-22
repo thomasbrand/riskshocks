@@ -23,7 +23,7 @@ shinyServer(function(input, output,session) {
   })
   
   dataResult <- reactive({
-    subdata <- subset(result,variable == input$ObsResult & shock %in% c(input$ShockResult,'sum of shocks') & time>=input$TimeResult[1] & time<=input$TimeResult[2])
+    subdata <- subset(result,variable == input$ObsResult & shock %in% c(input$ShockResult,'raw data') & time>=input$TimeResult[1] & time<=input$TimeResult[2])
     subdataIndex <- ddply(subdata,.(country,variable,shock),transform,index=value/value[1]*100)
     })
   
@@ -239,10 +239,11 @@ shinyServer(function(input, output,session) {
   
   doPlotForecast <- function(text_size=10){
     p <- ggplot(data=dataForecast(),aes(x=time,y=int50))+
-      geom_ribbon(aes(ymin=int20,ymax=int80),alpha=0.2,fill="#D6E3F3") +
-      geom_ribbon(aes(ymin=int30,ymax=int70),alpha=0.5,fill="#D6E3F3") +
+      geom_ribbon(aes(ymin=int20,ymax=int80),alpha=0.3,fill="#D6E3F3") +
+      geom_ribbon(aes(ymin=int30,ymax=int70),alpha=0.6,fill="#D6E3F3") +
       geom_ribbon(aes(ymin=int40,ymax=int60),alpha=0.9,fill="#D6E3F3") +
-      geom_line(size=0.8,colour="#1F77B4")+ 
+      geom_line(data=subset(dataForecast(),time>="2013-12-01"),size=0.73,linetype="dashed",colour="#1F77B4")+
+      geom_line(data=subset(dataForecast(),time<="2013-12-01"),size=0.8,colour="#1F77B4")+ 
       scale_x_date(expand=c(0.01,0.01))+
       facet_wrap(~obs,nrow=4,scales="free_y")+
       xlab(NULL) + ylab(NULL)+theme_bw()+

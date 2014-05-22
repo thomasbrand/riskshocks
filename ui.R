@@ -26,8 +26,6 @@ shinyUI(fluidPage(
   fluidRow(
     h5(a("Download working paper (preliminary draft)",href="https://github.com/thomasbrand/riskshocks/blob/master/RiskDivergence.pdf?raw=true",target="_blank"),align="center",style="line-height:11px")),
   
-  #br(),
-
   fluidRow(
     
     navlistPanel(
@@ -40,14 +38,9 @@ shinyUI(fluidPage(
         "Motivation",
         value="motiv",
         wellPanel(
-          p("Christiano, Motto and Rostagno (2014,", a("AER)",href="https://www.aeaweb.org/articles.php?doi=10.1257/aer.104.1.27",target="_blank"),
-            "show that risk shocks are essential to explain fluctuations of GDP in the US, especially during the Great Recession.",
-            helpPopup('Definition of risk','In a model à la Bernanke, Gertler and Gilchrist (1999), entrepreneurs combine their own resources with loans to acquire raw capital. They then convert raw capital into effective capital in a process characterized by idiosyncratic uncertainty. CMR (2014) refer to the magnitude of this uncertainty as risk.')),
-          p("Based on their model, we address three more questions: "),
-          p("* Is the decline of risk shocks essential to explain recovery ?"),
-          p("* Is it the same phenomenon in the EA ?"),
-          p("* What are the specific role of EA structures and policies in explaining those results ?"),
-          p("We update the CMR database, compile EA database and estimate the model for both countries.")
+          p("Highly synchronized during the 2008-2009 recession, Euro area and US economies have diverged since the former entered a double-dip recession, in the middle of 2011, while the latter pursued its weak recovery path. "),
+          p("At the end of 2013, US economy has overtaken the pre-crisis level of output per capita whereas it is still below its pre-crisis level in the Euro area."),
+          p("Why the Euro area and the US have diverged since 2011 while they were highly synchronized during the recession of 2008-2009?")
         ),
         h4("Index of",textOutput("captionMotiv1"),align="center"),
         showOutput("graphMotiv1","nvd3"),
@@ -59,10 +52,13 @@ shinyUI(fluidPage(
         "Results",
         value="result",
         wellPanel(
-          p("There are three main results: "),
-          p('* The reversal of risk shocks drives the US recovery and is the key determinant of recent economic growth.'),
-          p('* Risk shocks contributed less to the contraction in the EA than in the US, but they are at the origin of the double dip pattern of the crisis.'),
-          p('* Differences in fiscal and conventional monetary policies explain a part of the divergence during the contraction, but play a minor role in the recent divergence.')
+          p("We explain the divergence between Euro area and US economies by different paths of idiosyncratic uncertainty in the financial sector, also known as risk shocks as defined by ", a("Christiano, Motto and Rostagno (2014)",href="https://www.aeaweb.org/articles.php?doi=10.1257/aer.104.1.27",target="_blank"),
+            helpPopup('What are risk shocks?',"Risk shocks have been defined by CMR as exogenous disturbances that modify the idiosyncratic uncertainty in the financial sector. They assume each entrepreneur should combine personal wealth and loan provided by the financial intermediary to transform raw capital into effective capital. The technology through this process is specific to each entrepreneur, approximated by an idiosyncratic shock applied to raw capital. Entrepreneurs who draws a low value of this idiosyncratic shock experience failure and lenders have to pay to check the state of the firm. The volatility of idiosyncratic uncertainty is defined as the time-varying standard deviation of these idiosyncratic shocks. An increase in risk means a higher dispersion of idiosyncratic shocks and therefore a higher risk of default in the economy.")),
+          p("What's new since CMR already demonstrated the importance of risk shocks in the US business cycles, especially during the recession of 2008-2009?"),
+          p('* We highlight a reversal of risk shocks in the US economy in the middle of 2009 that drives the US recovery afterwards.'),
+          p('* We highlight a deterioration of the idiosyncratic uncertainty that is a the origin of the double-dip recession in the Euro area.'),
+          p('* We conclude that the divergence would have been even stronger if only risk shocks have occurred.'),
+          p("How do we proceed? We use the CMR methodology based on the estimation of a Dynamic Stochastic General Equilibrium (DSGE) model with nominal, real and financial frictions using macroeconomic and financial data up to 2013Q4. We update the CMR database for the US, compile a similar database for the Euro area, and estimate the DSGE model for both.")
         ),
         h4("Index of",textOutput("captionResult"),align="center"),
         showOutput("graphResult","nvd3")
@@ -81,9 +77,6 @@ shinyUI(fluidPage(
       tabPanel(
         "Shock Decomposition",
         value="decompo",
-#         wellPanel(
-#           p("Now you can have a look at the decomposition and the role of the 12 shocks in the variation of the 12 observed variables for the Euro Area and the United States.")
-#         ),
         h4("The Decomposition of Shocks in",textOutput("captionDecompo1"),align="center"),
         showOutput("graphDecompo1","nvd3"),
         h4("The Role of Shocks in",textOutput("captionDecompo2"),align="center"),
@@ -93,10 +86,7 @@ shinyUI(fluidPage(
       tabPanel(
         "Variance Decomposition",
         value="vardecompo",
-#         wellPanel(
-#           p("Prior mean and standard deviation are the same in both countries.")
-#         ),
-        h4("Variance decomposition at business cycle frequency (Percent)",align="center"),
+        h4("Variance decomposition at business cycle frequency (percent)",align="center"),
         dataTableOutput("tabVarDecompo")
       ),
       
@@ -110,9 +100,6 @@ shinyUI(fluidPage(
       tabPanel(
         "Counterfactual",
         value="counterfact",
-#         wellPanel(
-#           p("Assessing the role of shocks, policies and structures.")
-#         ),
         h4(textOutput("captionCounterfact"),align="center"),
         div(plotOutput("graphCounterfact",height="700px",width="760px"),align="center")
       ),     
@@ -127,9 +114,6 @@ shinyUI(fluidPage(
       tabPanel(
         "Prior and Posterior",
         value="posterior",
-        wellPanel(
-          p("Prior mean and standard deviation are the same in both countries.")
-        ),
         dataTableOutput("tabPosterior")
       ),
       
@@ -179,7 +163,7 @@ shinyUI(fluidPage(
       wellPanel(
         dateRangeInput('TimeResult','Date range:',start="2007-12-01",end="2013-12-01",min="1988-03-01",max="2013-12-01"),
         selectInput('ObsResult','Observed variable: ',levels(motiv1$variable)),
-        selectInput('ShockResult','Shock: ',levels(decompo$shock)[-1],selected='risk')
+        selectInput('ShockResult','Shock to feed the model and simulate the corresponding variable: ',levels(decompo$shock)[-1],selected='risk')
       ),
       downloadButton('downloadDataResult','Download Data as csv')
     ),
@@ -205,8 +189,8 @@ shinyUI(fluidPage(
     conditionalPanel(
       condition="input.tsp=='vardecompo'",
       wellPanel(
-        selectInput('CountryVarDecompo','Country',c('Euro Area','United States')),
-        checkboxInput('longtable','You want to see the details of the variance decomposition ?',FALSE)
+        selectInput('CountryVarDecompo','Country:',c('Euro Area','United States')),
+        checkboxInput('longtable','Check if you want to see the details of the variance decomposition',FALSE)
         ),
       downloadButton('downloadDataVarDecompo', 'Download Data as csv')
     ),
@@ -278,9 +262,10 @@ shinyUI(fluidPage(
     p("Source code available at",a("GitHub",href="https://github.com/thomasbrand/riskshocks",target="_blank"),
       style="font-size:12px"
     )
+    #textOutput("pageviews")
     
   )
-  #textOutput("pageviews"),
+  
   ),
   
   tagList(
