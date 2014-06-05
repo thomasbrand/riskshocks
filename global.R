@@ -1,23 +1,23 @@
 library(shiny)
 
-pkgs <- c("markdown","devtools","ggplot2","knitr","plyr")
-pkgs <- pkgs[!(pkgs %in% installed.packages()[,"Package"])]
-if(length(pkgs)) install.packages(pkgs,repos="http://cran.cs.wwu.edu/")
+#pkgs <- c("markdown","devtools","ggplot2","knitr","plyr")
+#pkgs <- pkgs[!(pkgs %in% installed.packages()[,"Package"])]
+#if(length(pkgs)) install.packages(pkgs,repos="http://cran.cs.wwu.edu/")
 
 library(plyr)
 library(knitr)
 library(markdown)
-library(devtools)
+#library(devtools)
 library(ggplot2)
 
-if(!("rCharts" %in% installed.packages()[,"Package"])) install_github("rCharts","ramnathv")
+#if(!("rCharts" %in% installed.packages()[,"Package"])) install_github("rCharts","thomasbrand")
 library(rCharts)
 
 load("data.RData")
 
 helpPopup <- function(title, content,
                       placement=c('right', 'top', 'left', 'bottom'),
-                      trigger=c('focus', 'hover', 'click', 'manual')) {
+                      trigger=c('focus','hover', 'click', 'manual')) {
   tagList(
     singleton(
       tags$head(
@@ -29,9 +29,9 @@ helpPopup <- function(title, content,
       title = title, `data-content` = content, `data-animation` = TRUE,
       `data-placement` = match.arg(placement, several.ok=TRUE)[1],
       `data-trigger` = match.arg(trigger, several.ok=TRUE)[1],
-      
       tags$i(class="icon-question-sign")
-    )
+    ),
+    tags$style(type='text/css', ".popover { max-width: 500px !important;}")
   )
 }
 

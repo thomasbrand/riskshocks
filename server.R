@@ -7,8 +7,13 @@ shinyServer(function(input, output,session) {
   #Data
   dataMotiv1 <- reactive({
     subdata <- subset(motiv1,variable == input$ObsMotiv1  & time>=input$TimeMotiv[1] & time<=input$TimeMotiv[2])
-    subdataIndex <- ddply(subdata,.(country,variable),transform,index=value/value[1]*100)
-    })
+    if (input$ObsMotiv1 %in% list("Short-term risk-free interest rate (APR)","Credit spread (APP)","Term premium (APP)")){
+      subdataIndex <- ddply(subdata,.(country,variable),transform,index=value-value[1])
+    }
+    else{
+      subdataIndex <- ddply(subdata,.(country,variable),transform,index=value/value[1]*100)
+    }
+  })
   
   dataMotiv2 <- reactive({
     if (input$withoutmean){
@@ -24,28 +29,34 @@ shinyServer(function(input, output,session) {
   
   dataResult <- reactive({
     subdata <- subset(result,variable == input$ObsResult & shock %in% c(input$ShockResult,'raw data') & time>=input$TimeResult[1] & time<=input$TimeResult[2])
-    subdataIndex <- ddply(subdata,.(country,variable,shock),transform,index=value/value[1]*100)
-    })
+    if (input$ObsResult %in% list("Short-term risk-free interest rate (APR)","Credit spread (APP)","Term premium (APP)")){
+     subdataIndex <- ddply(subdata,.(country,variable,shock),transform,index=value-value[1])
+    }
+    else{
+      subdataIndex <- ddply(subdata,.(country,variable,shock),transform,index=value/value[1]*100)
+    }  
+  })
   
-  dataRole <- reactive({
+  dataRoleVar <- reactive({
     rbind(subset(decompo,shock == input$ShockRole & country == input$CountryRole),
-          subset(motiv2, country == input$CountryRole & shock == 'rawdata (without mean)')
+          subset(motiv2, shock == 'rawdata (without mean)' & country == input$CountryRole)
     )
   })
   
+  dataRoleShock <- reactive({
+    rbind(subset(decompo,variable == input$ObsRole & country == input$CountryRole),
+          subset(motiv2, variable == input$ObsRole & country == input$CountryRole & shock == 'rawdata (without mean)'),
+          subset(sum, variable == input$ObsRole & country == input$CountryRole)
+      )
+  })
+  
   dataDecompo <- reactive({subset(decompo,variable == input$ObsDecompo & country == input$CountryDecompo)})
-  dataSum <- reactive({subset(sum, variable == input$ObsDecompo & country == input$CountryDecompo)})
-  dataDecompoSum <- reactive({rbind(dataDecompo(),
-                                    dataSum(),
-                                    subset(motiv2,variable == input$ObsDecompo & country == input$CountryDecompo & shock == 'rawdata (without mean)')
-                            )
-                      }
-                     )
   
   dataVarDecompo <- reactive({
     if (input$longtable){
       subset(vardecompo,country==input$CountryVarDecompo)
     } else{
+      names(vardecompoShort)[2]<-""
       subset(vardecompoShort, country==input$CountryVarDecompo)
     }
   })
@@ -82,28 +93,38 @@ shinyServer(function(input, output,session) {
     }
   })
   
+  
+  output$captionMotiv1First<-renderText({
+    if (input$ObsMotiv1 %in% list("Short-term risk-free interest rate (APR)","Credit spread (APP)","Term premium (APP)")){
+      "Deviation of"
+    } else "Index of"
+  })
   output$captionMotiv1<-renderText({
     input$ObsMotiv1
   })
   output$captionMotiv2<-renderText({
     input$ObsMotiv2
   })
+  output$captionResultFirst<-renderText({
+    if (input$ObsResult %in% list("Short-term risk-free interest rate (APR)","Credit spread (APP)","Term premium (APP)")){
+      "Deviation of"
+    } else "Index of"
+  })
   output$captionResult<-renderText({
     input$ObsResult
   })
-  output$captionRole<-renderText({
-    input$ShockRole
+  output$captionRoleShock<-renderText({
+    input$ObsRole
+  })
+#   output$captionRoleVar<-renderText({
+#     input$ShockRole
+#   })
+  output$captionDecompo<-renderText({
+    input$ObsDecompo
   })
   output$captionBirf<-renderText({
     input$ShockBirf
   })
-  output$captionDecompo1<-renderText({
-    input$ObsDecompo
-  })
-  output$captionDecompo2<-renderText({
-    input$ObsDecompo
-  })
-
   output$captionCounterfact <- renderText({
     if (input$VarCounterfact=="struc"){
       if (input$Country_model=="Euro Area"){
@@ -148,8 +169,8 @@ shinyServer(function(input, output,session) {
     n
   })
   
-  doPlotRole <- function(text_size=10){
-    p <- ggplot(data=dataRole(),aes(x=time,y=value,group=shock,color=shock))+
+  doPlotRoleVar <- function(text_size=10){
+    p <- ggplot(data=dataRoleVar(),aes(x=time,y=value,group=shock,color=shock))+
       geom_line(size=0.8)+geom_point(aes(shape=shock),size=2)+
       scale_color_manual(values=c('#1F77B4','#B6CCEA'))+
       scale_shape_manual(values=c(4,NA)) +
@@ -167,26 +188,26 @@ shinyServer(function(input, output,session) {
     print(p)
   }
   
-  output$graphRole <- renderPlot({
-    doPlotRole()  
+  output$graphRoleVar <- renderPlot({
+    doPlotRoleVar()  
   })
   
-  output$graphDecompo1 <- renderChart({
+  output$graphRoleShock <- renderChart({
+    n <- nPlot(value ~ time, data = dataRoleShock(), type = "lineWithFocusChart",group="shock")
+    n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
+    n$yAxis(tickFormat = specialtickDecompo(),showMaxMin = FALSE)
+    n$y2Axis(tickFormat ="#!function (d) {return d3.format(',.1%')(d);}!#",showMaxMin = FALSE)
+    n$x2Axis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
+    n$set(dom = 'graphRoleShock', width = 700,height=400)
+    n
+  })
+  
+  output$graphDecompo <- renderChart({
     n <- nPlot(value ~ time, data = dataDecompo(), type = "multiBarChart",group="shock")
     n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
     n$yAxis(tickFormat = specialtickDecompo(),showMaxMin = TRUE)
     n$chart(showControls=FALSE,stacked=TRUE)
-    n$set(dom = 'graphDecompo1', width = 700,height=400)
-    n
-  })
-  
-  output$graphDecompo2 <- renderChart({
-    n <- nPlot(value ~ time, data = dataDecompoSum(), type = "lineWithFocusChart",group="shock")
-    n$xAxis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
-    n$yAxis(tickFormat = specialtickDecompo(),showMaxMin = FALSE)
-    #n$y2Axis(tickFormat ="#!function (d) {return d3.format(',.1%')(d);}!#",showMaxMin = FALSE)
-    n$x2Axis(tickFormat ="#!function (d) {return d3.time.format('%m/%Y')(new Date(d * 86400000 ));}!#",showMaxMin=TRUE)
-    n$set(dom = 'graphDecompo2', width = 700,height=400)
+    n$set(dom = 'graphDecompo', width = 700,height=400)
     n
   })
   
@@ -271,16 +292,17 @@ shinyServer(function(input, output,session) {
   
   output$downloadDataResult <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(result, file)})
   
-  output$downloadGraphRole <- downloadHandler(filename = 'plot.pdf',
-                                                content = function(file){
-                                                  pdf(file = file)
-                                                  doPlotRole(text_size=7)
-                                                  dev.off()
-                                                })
-
-  output$downloadDataDecompo <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(decompo,sum), file)})
+#   output$downloadGraphRole <- downloadHandler(filename = 'plot.pdf',
+#                                                 content = function(file){
+#                                                   pdf(file = file)
+#                                                   doPlotRole(text_size=7)
+#                                                   dev.off()
+#                                                 })
+  output$downloadDataRoleShock <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(decompo,sum), file)})
   
-  output$downloadDataVarDecompo <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(vardecompo), file)})
+  output$downloadDataDecompo <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(decompo, file)})
+  
+  output$downloadDataVarDecompo <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(vardecompo, file)})
   
   output$downloadGraphBirf <- downloadHandler(filename = 'plot.pdf',
                                                content = function(file){

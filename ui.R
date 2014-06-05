@@ -42,7 +42,7 @@ shinyUI(fluidPage(
           p("At the end of 2013, US economy has overtaken the pre-crisis level of output per capita whereas it is still below its pre-crisis level in the Euro area."),
           p("Why the Euro area and the US have diverged since 2011 while they were highly synchronized during the recession of 2008-2009?")
         ),
-        h4("Index of",textOutput("captionMotiv1"),align="center"),
+        h4(textOutput("captionMotiv1First"),textOutput("captionMotiv1"),align="center"),
         showOutput("graphMotiv1","nvd3"),
         h4(textOutput("captionMotiv2"),align="center"),
         showOutput('graphMotiv2','nvd3')
@@ -53,14 +53,14 @@ shinyUI(fluidPage(
         value="result",
         wellPanel(
           p("We explain the divergence between Euro area and US economies by different paths of idiosyncratic uncertainty in the financial sector, also known as risk shocks as defined by ", a("Christiano, Motto and Rostagno (2014)",href="https://www.aeaweb.org/articles.php?doi=10.1257/aer.104.1.27",target="_blank"),
-            helpPopup('What are risk shocks?',"Risk shocks have been defined by CMR as exogenous disturbances that modify the idiosyncratic uncertainty in the financial sector. They assume each entrepreneur should combine personal wealth and loan provided by the financial intermediary to transform raw capital into effective capital. The technology through this process is specific to each entrepreneur, approximated by an idiosyncratic shock applied to raw capital. Entrepreneurs who draws a low value of this idiosyncratic shock experience failure and lenders have to pay to check the state of the firm. The volatility of idiosyncratic uncertainty is defined as the time-varying standard deviation of these idiosyncratic shocks. An increase in risk means a higher dispersion of idiosyncratic shocks and therefore a higher risk of default in the economy.")),
+            helpPopup('What are risk shocks?',"Risk shocks have been defined by CMR as exogenous disturbances that modify the idiosyncratic uncertainty in the financial sector. They assume each entrepreneur should combine personal wealth and loan provided by the financial intermediary to transform raw capital into effective capital. The technology through this process is specific to each entrepreneur, approximated by an idiosyncratic shock applied to raw capital. Entrepreneurs who draws a low value of this idiosyncratic shock experience failure and lenders have to pay to check the state of the firm. The volatility of idiosyncratic uncertainty is defined as the time-varying standard deviation of these idiosyncratic shocks. An increase in risk means a higher dispersion of idiosyncratic shocks and therefore a higher risk of default in the economy.",trigger='click')),
           p("What's new since CMR already demonstrated the importance of risk shocks in the US business cycles, especially during the recession of 2008-2009?"),
           p('* We highlight a reversal of risk shocks in the US economy in the middle of 2009 that drives the US recovery afterwards.'),
           p('* We highlight a deterioration of the idiosyncratic uncertainty that is a the origin of the double-dip recession in the Euro area.'),
           p('* We conclude that the divergence would have been even stronger if only risk shocks have occurred.'),
           p("How do we proceed? We use the CMR methodology based on the estimation of a Dynamic Stochastic General Equilibrium (DSGE) model with nominal, real and financial frictions using macroeconomic and financial data up to 2013Q4. We update the CMR database for the US, compile a similar database for the Euro area, and estimate the DSGE model for both.")
         ),
-        h4("Index of",textOutput("captionResult"),align="center"),
+        h4(textOutput("captionResultFirst"),textOutput("captionResult"),align="center"),
         showOutput("graphResult","nvd3")
       ),
       
@@ -68,19 +68,19 @@ shinyUI(fluidPage(
         "Role of Shocks",
         value="role",
         wellPanel(
-          p('We compare raw data to simulated data, obtained when we feed only the selected shock to the model.')
+          p('We compare raw data to simulated data, obtained when we feed only one shock to the model.')
         ),               
-        h4("The Role of the Selected Shock in Observed Variables",align="center"),
-        div(plotOutput("graphRole",height="700px",width="760px"),align="center")
+        #h4("The Role of the Selected Shock in Observed Variables",align="center"),
+        #div(plotOutput("graphRoleVar",height="700px",width="760px"),align="center")
+        h4("The Role of Shocks in",textOutput("captionRoleShock"),align="center"),
+        showOutput("graphRoleShock","nvd3")
       ),
       
       tabPanel(
         "Shock Decomposition",
         value="decompo",
-        h4("The Decomposition of Shocks in",textOutput("captionDecompo1"),align="center"),
-        showOutput("graphDecompo1","nvd3"),
-        h4("The Role of Shocks in",textOutput("captionDecompo2"),align="center"),
-        showOutput("graphDecompo2","nvd3")
+        h4("The Decomposition of Shocks in",textOutput("captionDecompo"),align="center"),
+        showOutput("graphDecompo","nvd3")        
       ),
 
       tabPanel(
@@ -123,7 +123,7 @@ shinyUI(fluidPage(
         wellPanel(
           p("We use quarterly observations on 12 variables covering the period 1987Q1-2013Q4. These include 8 variables that are standard in bayesian estimation of DSGE models: GDP, consumption, investment, inflation, wage, price of investment, hours worked and short-term risk-free rate."),
           p("For Euro case, we use the Area-wide Model (AWM) database, up to 2010Q4. We then link, where it is feasible, the data contained in the orginal AWM database to the official euro area data.",
-            helpPopup("AWM Database","The original version of the databas is the ECB working paper No. 42: ‘An Area-wide Model (AWM) for the euro area’ by Gabriel Fagan, Jérôme Henry and Ricardo Mestre (January 2001). Here we use the 11th update of the AWM database. It has been constructed using both euro area data reported in the ECB Monthly Bulletin and other ECB and Eurostat data where available.")),
+            helpPopup("AWM Database","The original version of the databas is the ECB working paper No. 42: ‘An Area-wide Model (AWM) for the euro area’ by Gabriel Fagan, Jérôme Henry and Ricardo Mestre (January 2001). Here we use the 11th update of the AWM database. It has been constructed using both euro area data reported in the ECB Monthly Bulletin and other ECB and Eurostat data where available.",trigger='click')),
           p("As CMR, we also use four financial variables: credit, slope of the term structure of interest rates, entrepreneurial networth and credit spread."),
           p("Population series are used to normalize quantity variables.")
         ),
@@ -146,9 +146,9 @@ shinyUI(fluidPage(
       condition="input.tsp=='motiv'",
       wellPanel(
         dateRangeInput('TimeMotiv','Date range (from 1988Q1 to 2013Q4):',start="2007-12-01",end="2013-12-01",min="1988-03-01",max="2013-12-01"),
-        selectInput('ObsMotiv1','Index of selected variable:',levels(motiv1$variable)),
-        selectInput('ObsMotiv2','Variable used in estimation (in real terms, except interest rate, and per capita for quantities):',levels(motiv2$variable)),
-        checkboxInput('withoutmean','Demeaned variable (actually used in estimation)',FALSE),
+        selectInput('ObsMotiv1','Index/Deviation of observed variable (in real terms, except interest rate, and per capita for quantities):',levels(motiv1$variable)),
+        selectInput('ObsMotiv2','Observed variable, as used in estimation:',levels(motiv2$variable)),
+        checkboxInput('withoutmean','Demeaned variable',FALSE),
         conditionalPanel(
           condition="input.withoutmean==true",
           p("Maybe you want to compare to CMR rawdata (also annualized)?",style="font-size:12px"),
@@ -162,7 +162,7 @@ shinyUI(fluidPage(
       condition="input.tsp=='result'",
       wellPanel(
         dateRangeInput('TimeResult','Date range:',start="2007-12-01",end="2013-12-01",min="1988-03-01",max="2013-12-01"),
-        selectInput('ObsResult','Observed variable: ',levels(motiv1$variable)),
+        selectInput('ObsResult','Index/Deviation of observed and simulated variables: ',levels(motiv1$variable)),
         selectInput('ShockResult','Shock to feed the model and simulate the corresponding variable: ',levels(decompo$shock)[-1],selected='risk')
       ),
       downloadButton('downloadDataResult','Download Data as csv')
@@ -172,16 +172,18 @@ shinyUI(fluidPage(
       condition="input.tsp=='role'",
       wellPanel(
         selectInput('CountryRole',"Country: ",c("Euro Area",'United States')),
-        selectInput('ShockRole','Shock: ',levels(decompo$shock)[-1],selected='risk')
+        selectInput('ObsRole','Observed variable: ',levels(decompo$variable))
+        #selectInput('ShockRole','Shock: ',levels(decompo$shock)[-1],selected='risk')
       ),
-      downloadButton("downloadGraphRole", "Download Graphic as pdf")
+      #downloadButton("downloadGraphRole", "Download Graphic as pdf")
+      downloadButton('downloadDataRoleShock','Download Data as csv')
     ),
     
     conditionalPanel(
       condition="input.tsp=='decompo'",
       wellPanel(
         selectInput('CountryDecompo','Country: ',c("Euro Area",'United States')),
-        selectInput('ObsDecompo','Observed Variable: ',levels(decompo$variable))
+        selectInput('ObsDecompo','Observed variable: ',levels(decompo$variable))
       ),
       downloadButton('downloadDataDecompo', 'Download Data as csv')
     ),

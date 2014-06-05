@@ -45,7 +45,9 @@ output: html_document
       * 2005Q2 - 2013Q4 : 3-month EONIA swap (Datastream: [EUEON3M](https://forms.thomsonreuters.com/datastream/))
   * Credit
     * US : Nonfinancial Noncorporate Business; Credit Market Instruments; Liability + Nonfinancial Corporate Business; Credit Market Instruments; Liability, Level, Billions of Dollars, Quarterly, Not Seasonally Adjusted (Fred [series1](http://research.stlouisfed.org/fred2/series/NNBTCMDODNS) + [series2](http://research.stlouisfed.org/fred2/series/TCMILBSNNCB)), divided by GDP Deflator
-    * EA : Loans to Non-MFIs excluding general government sector, Outstanding amounts at the end of the period (stocks), Monthly, Neither seasonally nor working day adjusted, Euro area changing composition (ECB [series](http://sdw.ecb.europa.eu/quickview.do?SERIES_KEY=117.BSI.M.U2.N.U.A20.A.1.U2.2200.Z01.E)), divided by GDP Deflator
+    * EA : 
+      * 1987Q1 - 1998Q4 : Loans to Non-MFIs excluding general government sector, Outstanding amounts at the end of the period (stocks), Monthly, Neither seasonally nor working day adjusted, Euro area changing composition (ECB [series](http://sdw.ecb.europa.eu/quickview.do?SERIES_KEY=117.BSI.M.U2.N.U.A20.A.1.U2.2200.Z01.E)), divided by GDP Deflator
+      * 1999Q1 - 2013Q4 : Loans to Non-financial corporations, Closing balance sheet, Quarterly, Neither seasonally nor working day adjusted, Euro area changing composition (ECB [series](http://sdw.ecb.europa.eu/quickview.do?SERIES_KEY=158.IEAQ.Q.I6.N.V.LE.F4.S11.A1.S.2.X.E.Z)), divided by GDP Deflator
   * Credit spread
     * US : Moody's Seasoned Baa Corporate Bond Yield, Percent, Quarterly, Not Seasonally Adjusted (Fred [series](http://research.stlouisfed.org/fred2/series/BAA)), less 10-year Government Bond Yield
     * EA :
