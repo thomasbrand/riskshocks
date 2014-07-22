@@ -58,7 +58,7 @@ output: html_document
     * EA :
       * 1987Q1 - 2010Q4 : Long-term Interest Rate (AWM: LTN), less Short-term Interest Rate
       * 2011Q1 - 2013Q4 : Long-term government bond yields (in most cases 10 years), Quarterly, average observation through period, Euro area 18 (OECD [StatExtracts](http://stats.oecd.org/) General Statistics, Key Short-Term Economic Indicators), less Short-term Interest Rate
-  * Entrepreneurial networth
+  * Entrepreneurial net worth
     * US : Wilshire 5000 Total Market Index, Quarterly, Not Seasonally Adjusted (Fred [series](http://research.stlouisfed.org/fred2/series/WILL5000IND)), divided by GDP Deflator
     * EA : Dow Jones Euro Stoxx Price Index, Historical close, Quarterly, average observation through period, Euro area changing composition (ECB [series](http://sdw.ecb.europa.eu/quickview.do?SERIES_KEY=143.FM.Q.U2.EUR.DS.EI.DJEURST.HSTA)), divided by GDP Deflator
   * Population

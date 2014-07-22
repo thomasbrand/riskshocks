@@ -18,12 +18,12 @@ shinyServer(function(input, output,session) {
   dataMotiv2 <- reactive({
     if (input$withoutmean){
       if (input$rawdataCMR){
-        rbind(subset(motiv2,variable == input$ObsMotiv2 & shock %in% c('rawdata (without mean)','rawdataCMR') & time>=input$TimeMotiv[1] & time<=input$TimeMotiv[2]))
+        rbind(subset(motiv2,variable == input$ObsMotiv2 & shock %in% c('raw data (without mean)','rawdataCMR') & time>=input$TimeMotiv[1] & time<=input$TimeMotiv[2]))
       } else{
-        rbind(subset(motiv2,variable == input$ObsMotiv2 & shock == 'rawdata (without mean)' & time>=input$TimeMotiv[1] & time<=input$TimeMotiv[2]))
+        rbind(subset(motiv2,variable == input$ObsMotiv2 & shock == 'raw data (without mean)' & time>=input$TimeMotiv[1] & time<=input$TimeMotiv[2]))
       }
     } else{
-      subset(motiv2,variable == input$ObsMotiv2 & shock == 'rawdata (with mean)' & time>=input$TimeMotiv[1] & time<=input$TimeMotiv[2])
+      subset(motiv2,variable == input$ObsMotiv2 & shock == 'raw data (with mean)' & time>=input$TimeMotiv[1] & time<=input$TimeMotiv[2])
     }
   })
   
@@ -39,13 +39,13 @@ shinyServer(function(input, output,session) {
   
   dataRoleVar <- reactive({
     rbind(subset(decompo,shock == input$ShockRole & country == input$CountryRole),
-          subset(motiv2, shock == 'rawdata (without mean)' & country == input$CountryRole)
+          subset(motiv2, shock == 'raw data (without mean)' & country == input$CountryRole)
     )
   })
   
   dataRoleShock <- reactive({
     rbind(subset(decompo,variable == input$ObsRole & country == input$CountryRole),
-          subset(motiv2, variable == input$ObsRole & country == input$CountryRole & shock == 'rawdata (without mean)'),
+          subset(motiv2, variable == input$ObsRole & country == input$CountryRole & shock == 'raw data (without mean)'),
           subset(sum, variable == input$ObsRole & country == input$CountryRole)
       )
   })
