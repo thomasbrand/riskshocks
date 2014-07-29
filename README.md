@@ -12,4 +12,4 @@ The website has been coded in R. Special thanks to :
   * Ramnathv Vaidyanathan ([@ramnathv](https://github.com/ramnathv)) for rCharts
   * [@timelyportfolio](https://github.com/timelyportfolio), [@leonawicz](https://github.com/leonawicz) for examples
   * [Huidong Tian](http://withr.me) for 'Calculation in Process' indicator
-  * Dimitri, Matteo and Dominique, from CEPII, for their help
+  * Dimitri Guérin, Matteo Gagliardi and Dominique Pianelli, from CEPII, for their help

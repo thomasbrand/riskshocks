@@ -6,7 +6,7 @@ shinyServer(function(input, output,session) {
   
   #Data
   dataMotiv1 <- reactive({
-    subdata <- subset(motiv1,variable == input$ObsMotiv1  & time>=input$TimeMotiv[1] & time<=input$TimeMotiv[2])
+    subdata <- subset(motiv1,variable == input$ObsMotiv1 & time>=input$TimeMotiv[1] & time<=input$TimeMotiv[2])
     if (input$ObsMotiv1 %in% list("Short-term risk-free interest rate (APR)","Credit spread (APP)","Term premium (APP)")){
       subdataIndex <- ddply(subdata,.(country,variable),transform,index=value-value[1])
     }
@@ -30,11 +30,11 @@ shinyServer(function(input, output,session) {
   dataResult <- reactive({
     subdata <- subset(result,variable == input$ObsResult & shock %in% c(input$ShockResult,'raw data') & time>=input$TimeResult[1] & time<=input$TimeResult[2])
     if (input$ObsResult %in% list("Short-term risk-free interest rate (APR)","Credit spread (APP)","Term premium (APP)")){
-     subdataIndex <- ddply(subdata,.(country,variable,shock),transform,index=value-value[1])
+      subdataIndex <- ddply(subdata,.(country,variable,shock),transform,index=value-value[1])
     }
     else{
       subdataIndex <- ddply(subdata,.(country,variable,shock),transform,index=value/value[1]*100)
-    }  
+    }
   })
   
   dataRoleVar <- reactive({
@@ -47,7 +47,7 @@ shinyServer(function(input, output,session) {
     rbind(subset(decompo,variable == input$ObsRole & country == input$CountryRole),
           subset(motiv2, variable == input$ObsRole & country == input$CountryRole & shock == 'raw data (without mean)'),
           subset(sum, variable == input$ObsRole & country == input$CountryRole)
-      )
+    )
   })
   
   dataDecompo <- reactive({subset(decompo,variable == input$ObsDecompo & country == input$CountryDecompo)})
@@ -116,9 +116,9 @@ shinyServer(function(input, output,session) {
   output$captionRoleShock<-renderText({
     input$ObsRole
   })
-#   output$captionRoleVar<-renderText({
-#     input$ShockRole
-#   })
+  # output$captionRoleVar<-renderText({
+  # input$ShockRole
+  # })
   output$captionDecompo<-renderText({
     input$ObsDecompo
   })
@@ -133,7 +133,7 @@ shinyServer(function(input, output,session) {
         "US specific economic structure hit by all shocks from the EA and from the US"
       }
     } else{
-    if (input$Country_shock=="Euro Area"){
+      if (input$Country_shock=="Euro Area"){
         "All EA shocks hitting EA and US specific economic structure"
       } else{
         "All US shocks hitting EA and US specific economic structure"
@@ -189,7 +189,7 @@ shinyServer(function(input, output,session) {
   }
   
   output$graphRoleVar <- renderPlot({
-    doPlotRoleVar()  
+    doPlotRoleVar()
   })
   
   output$graphRoleShock <- renderChart({
@@ -231,7 +231,7 @@ shinyServer(function(input, output,session) {
   }
   
   output$graphBirf <- renderPlot({
-    doPlotBirf()  
+    doPlotBirf()
   })
   
   doPlotCounterfact <- function(text_size=10){
@@ -255,7 +255,7 @@ shinyServer(function(input, output,session) {
   }
   
   output$graphCounterfact <- renderPlot({
-    doPlotCounterfact()  
+    doPlotCounterfact()
   })
   
   doPlotForecast <- function(text_size=10){
@@ -264,7 +264,7 @@ shinyServer(function(input, output,session) {
       geom_ribbon(aes(ymin=int30,ymax=int70),alpha=0.6,fill="#D6E3F3") +
       geom_ribbon(aes(ymin=int40,ymax=int60),alpha=0.9,fill="#D6E3F3") +
       geom_line(data=subset(dataForecast(),time>="2013-12-01"),size=0.73,linetype="dashed",colour="#1F77B4")+
-      geom_line(data=subset(dataForecast(),time<="2013-12-01"),size=0.8,colour="#1F77B4")+ 
+      geom_line(data=subset(dataForecast(),time<="2013-12-01"),size=0.8,colour="#1F77B4")+
       scale_x_date(expand=c(0.01,0.01))+
       facet_wrap(~obs,nrow=4,scales="free_y")+
       xlab(NULL) + ylab(NULL)+theme_bw()+
@@ -279,11 +279,11 @@ shinyServer(function(input, output,session) {
   }
   
   output$graphForecast <- renderPlot({
-    doPlotForecast()  
+    doPlotForecast()
   })
   
   output$tabPosterior <- renderDataTable({dataPosterior()},options=list(bPaginate=FALSE,bLengthChange=FALSE,bFilter=FALSE,bSort=0,bInfo=0))
-
+  
   output$txtSource<-renderUI({includeRmd('essai.Rmd')})
   
   #Download
@@ -292,12 +292,12 @@ shinyServer(function(input, output,session) {
   
   output$downloadDataResult <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(result, file)})
   
-#   output$downloadGraphRole <- downloadHandler(filename = 'plot.pdf',
-#                                                 content = function(file){
-#                                                   pdf(file = file)
-#                                                   doPlotRole(text_size=7)
-#                                                   dev.off()
-#                                                 })
+  # output$downloadGraphRole <- downloadHandler(filename = 'plot.pdf',
+  # content = function(file){
+  # pdf(file = file)
+  # doPlotRole(text_size=7)
+  # dev.off()
+  # })
   output$downloadDataRoleShock <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(decompo,sum), file)})
   
   output$downloadDataDecompo <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(decompo, file)})
@@ -305,23 +305,23 @@ shinyServer(function(input, output,session) {
   output$downloadDataVarDecompo <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(vardecompo, file)})
   
   output$downloadGraphBirf <- downloadHandler(filename = 'plot.pdf',
-                                               content = function(file){
-                                                 pdf(file = file)
-                                                 doPlotBirf(text_size=7)
-                                                 dev.off()
-                                               }
-                                             )
+                                              content = function(file){
+                                                pdf(file = file)
+                                                doPlotBirf(text_size=7)
+                                                dev.off()
+                                              }
+  )
   
   output$downloadDataBirf <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(birf,sum), file)})
   output$downloadDataCounterfact <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(counterfact,sum), file)})
   output$downloadDataForecast <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(rbind(forecast,sum), file)})
   
   output$downloadGraphCounterfact <- downloadHandler(filename = 'plot.pdf',
-                                             content = function(file){
-                                               pdf(file = file)
-                                               doPlotCounterfact(text_size=7)
-                                               dev.off()
-                                             })
+                                                     content = function(file){
+                                                       pdf(file = file)
+                                                       doPlotCounterfact(text_size=7)
+                                                       dev.off()
+                                                     })
   
   output$downloadGraphForecast <- downloadHandler(filename = 'plot.pdf',
                                                   content = function(file){
@@ -333,7 +333,7 @@ shinyServer(function(input, output,session) {
   output$downloadDataPosterior <- downloadHandler(filename = 'data.csv', content = function(file) {write.csv(posterior, file)})
   
   #Options
-  output$pageviews <-  renderText({
+  output$pageviews <- renderText({
     if (!file.exists("pageviews.Rdata")) pageviews <- 0 else load(file="pageviews.Rdata")
     pageviews <- pageviews + 1
     save(pageviews,file="pageviews.Rdata")
@@ -346,4 +346,3 @@ shinyServer(function(input, output,session) {
   outputOptions(output, 'activeTab', suspendWhenHidden=FALSE)
   
 })
-
